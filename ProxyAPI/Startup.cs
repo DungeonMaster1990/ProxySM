@@ -31,6 +31,7 @@ namespace ProxyAPI
             services.AddMvc();
             services.AddControllers();
 
+            services.AddHttpContextAccessor();
             var containerBuilder = new ContainerBuilder();
             RegisterCommonDependencies(containerBuilder);
 
