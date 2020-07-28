@@ -351,3 +351,5 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/ProxyAPI/.vs/ProxyAPI/v16/.suo
+/ProxyAPI/.vs/ProxyAPI/v16/.suo
