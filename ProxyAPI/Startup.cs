@@ -10,6 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using dh = Common.Helpers.DependencyHelper;
 
 namespace ProxyAPI
 {
@@ -23,9 +26,18 @@ namespace ProxyAPI
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc();
             services.AddControllers();
+
+            var containerBuilder = new ContainerBuilder();
+            RegisterCommonDependencies(containerBuilder);
+
+            containerBuilder.Populate(services);
+            var container = containerBuilder.Build();
+
+            return new AutofacServiceProvider(container);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,6 +58,14 @@ namespace ProxyAPI
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private static void RegisterCommonDependencies(ContainerBuilder builder)
+        {
+            foreach (var dependency in dh.DependencyHelper.GetCommonDependencies())
+            {
+                builder.RegisterType(dependency.Value).As(dependency.Key).InstancePerLifetimeScope();
+            }
         }
     }
 }
