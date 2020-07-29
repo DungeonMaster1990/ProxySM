@@ -68,7 +68,6 @@ namespace ProxyAPI
             foreach (var dependency in dh.DependencyHelper.GetCommonDependencies())
             {
                 builder.RegisterType(dependency.Value).As(dependency.Key).InstancePerLifetimeScope();
-                builder.Re
             }
         }
     }
