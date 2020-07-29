@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using dh = Common.Helpers.DependencyHelper;
+using Common.Models.ConfigModels;
 
 namespace ProxyAPI
 {
@@ -32,6 +33,7 @@ namespace ProxyAPI
             services.AddControllers();
 
             services.AddHttpContextAccessor();
+            services.Configure<SMApiConfigurationModel>(Configuration.GetSection("SMApiConfig"));
             var containerBuilder = new ContainerBuilder();
             RegisterCommonDependencies(containerBuilder);
 
@@ -66,6 +68,7 @@ namespace ProxyAPI
             foreach (var dependency in dh.DependencyHelper.GetCommonDependencies())
             {
                 builder.RegisterType(dependency.Value).As(dependency.Key).InstancePerLifetimeScope();
+                builder.Re
             }
         }
     }
