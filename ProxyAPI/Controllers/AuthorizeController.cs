@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace ProxyAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class AuthorizeController : Controller
     {
@@ -22,13 +22,13 @@ namespace ProxyAPI.Controllers
 
 
         [HttpPost]
-        public IActionResult Authorize(VmAuthorizeCredentials credentials)
+        public IActionResult Post(VmAuthorizeCredentials credentials)
         {
             throw new NotImplementedException();
             //_helper.Authorize(credentials);
         }
 
-        [HttpGet("authorize")]
+        [HttpGet]
         public IActionResult Get()
         {
             throw new NotImplementedException();
