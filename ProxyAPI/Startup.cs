@@ -14,14 +14,22 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using dh = Common.Helpers.DependencyHelper;
 using Common.Models.ConfigModels;
+using Microsoft.Extensions.Configuration;
 
 namespace ProxyAPI
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private IWebHostEnvironment HostingEnvironment { get; }
+        public Startup(IWebHostEnvironment hostingEnvironment)
         {
-            Configuration = configuration;
+            HostingEnvironment = hostingEnvironment;
+            Configuration = new ConfigurationBuilder()
+                .SetBasePath(hostingEnvironment.ContentRootPath)
+                .AddEnvironmentVariables()
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{hostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                .Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -68,7 +76,6 @@ namespace ProxyAPI
             foreach (var dependency in dh.DependencyHelper.GetCommonDependencies())
             {
                 builder.RegisterType(dependency.Value).As(dependency.Key).InstancePerLifetimeScope();
-                builder.Re
             }
         }
     }
