@@ -28,7 +28,12 @@ namespace ProxyAPI
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {           
+        {
+            services.AddMvc(mvcOtions =>
+            {
+                mvcOtions.EnableEndpointRouting = false;
+            });
+            
             services.AddControllers();
             services.AddSwaggerGen();
             services.AddHttpContextAccessor();
@@ -56,10 +61,7 @@ namespace ProxyAPI
             });
 
             //app.UseAuthorization();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseMvc();
         }
 
         private static void AddCommonServices(IServiceCollection services)

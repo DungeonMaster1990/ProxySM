@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProxyAPI", "ProxyAPI.csproj", "{6E87B89B-049F-4B6A-B039-1FF03A9DAE79}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "..\Common\Common.csproj", "{1EA432E8-8A34-4367-AAF2-DC3018FBC23C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\Common\Common.csproj", "{1EA432E8-8A34-4367-AAF2-DC3018FBC23C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

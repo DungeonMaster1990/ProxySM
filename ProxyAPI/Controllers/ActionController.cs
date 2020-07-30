@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ProxyAPI.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ActionController : ControllerBase
     {

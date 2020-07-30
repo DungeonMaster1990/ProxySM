@@ -3,8 +3,8 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:50152/",
-      "sslPort": 0
+      "applicationUrl": "http://localhost:50152/api/authorize",
+      "sslPort": 44386
     }
   },
   "$schema": "http://json.schemastore.org/launchsettings.json",
@@ -20,7 +20,7 @@
     "ProxyAPI": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "",
+      "launchUrl": "weatherforecast",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
