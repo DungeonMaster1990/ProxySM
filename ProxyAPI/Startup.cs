@@ -10,8 +10,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
 using dh = Common.Helpers.DependencyHelper;
 using Common.Models.ConfigModels;
 using Microsoft.Extensions.Configuration;
@@ -20,10 +18,11 @@ namespace ProxyAPI
 {
     public class Startup
     {
-        private IWebHostEnvironment HostingEnvironment { get; }
+        private IWebHostEnvironment _hostingEnvironment;
+        private IServiceProvider _serviceProvider;
         public Startup(IWebHostEnvironment hostingEnvironment)
         {
-            HostingEnvironment = hostingEnvironment;
+            _hostingEnvironment = hostingEnvironment;
             Configuration = new ConfigurationBuilder()
                 .SetBasePath(hostingEnvironment.ContentRootPath)
                 .AddEnvironmentVariables()
@@ -35,20 +34,16 @@ namespace ProxyAPI
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
             services.AddControllers();
 
             services.AddHttpContextAccessor();
             services.Configure<SMApiConfigurationModel>(Configuration.GetSection("SMApiConfig"));
-            var containerBuilder = new ContainerBuilder();
-            RegisterCommonDependencies(containerBuilder);
+            AddCommonServices(services);
 
-            containerBuilder.Populate(services);
-            var container = containerBuilder.Build();
-
-            return new AutofacServiceProvider(container);
+            _serviceProvider = services.BuildServiceProvider();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,7 +58,7 @@ namespace ProxyAPI
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
@@ -71,11 +66,11 @@ namespace ProxyAPI
             });
         }
 
-        private static void RegisterCommonDependencies(ContainerBuilder builder)
+        private static void AddCommonServices(IServiceCollection services)
         {
             foreach (var dependency in dh.DependencyHelper.GetCommonDependencies())
             {
-                builder.RegisterType(dependency.Value).As(dependency.Key).InstancePerLifetimeScope();
+                services.AddTransient(dependency.Key, dependency.Value);
             }
         }
     }
