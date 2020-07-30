@@ -28,8 +28,8 @@ namespace ProxyAPI.Controllers
         [HttpPost]
         public IActionResult Authorize(VmAuthorizeCredentials credentials)
         {
-
-            _helper.Authorize(credentials);
+            throw new NotImplementedException();
+            //_helper.Authorize(credentials);
         }
     }
 }
