@@ -1,18 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using dh = Common.Helpers.DependencyHelper;
 using Common.Models.ConfigModels;
-using Microsoft.Extensions.Configuration;
 
 namespace ProxyAPI
 {
@@ -44,16 +37,14 @@ namespace ProxyAPI
             services.Configure<SMApiConfigurationModel>(Configuration.GetSection("SMApiConfig"));
             AddCommonServices(services);
 
-            _serviceProvider = services.BuildServiceProvider();
+            //_serviceProvider = services.BuildServiceProvider();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
 
             app.UseSwagger();
 
