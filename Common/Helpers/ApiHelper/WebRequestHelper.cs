@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Common.Models.VmModels;
 
 namespace Common.Helpers.ApiHelper
 {
@@ -57,6 +58,28 @@ namespace Common.Helpers.ApiHelper
             return await GetGetResponse<T>(webRequest);
         }
 
+        public T WebApiAuthorizeRequestPost<T>(string url, VmAuthorizeCredentials credentials)
+        {
+            return AuthorizePost<T>(url, credentials).GetAwaiter().GetResult();
+        }
+
+        public T WebApiAuthorizeRequestGet<T>(string url, VmAuthorizeCredentials credentials)
+        {
+            return AuthorizeGet<T>(url, credentials).GetAwaiter().GetResult();
+        }
+
+        public async Task<T> AuthorizePost<T>(string url, VmAuthorizeCredentials credentials)
+        {
+            var request = GetAuthRequest(url, WebRequestMethods.Http.Post, credentials);
+            return await GetGetResponse<T>(request);
+        }
+
+        public async Task<T> AuthorizeGet<T>(string url, VmAuthorizeCredentials credentials)
+        {
+            var request = GetAuthRequest(url, WebRequestMethods.Http.Get, credentials);
+            return await GetGetResponse<T>(request);
+        }
+
         private HttpWebRequest GetRequest(string url, string method)
         {
             if (!(WebRequest.Create(url) is HttpWebRequest webRequest))
@@ -77,9 +100,37 @@ namespace Common.Helpers.ApiHelper
             webRequest.Method = method;
             webRequest.ContentType = "application/json; charset=utf-8";
             webRequest.Accept = "application/json";
-            webRequest.Credentials = CredentialCache.DefaultCredentials;
+            //webRequest.Credentials = CredentialCache.DefaultCredentials;
             ServicePointManager.ServerCertificateValidationCallback = AcceptAllCertifications;
 
+            return webRequest;
+        }
+
+        private HttpWebRequest GetAuthRequest(string url, string method, VmAuthorizeCredentials credentials)
+        {
+            if (!(WebRequest.Create(url) is HttpWebRequest webRequest))
+            {
+                throw new Exception("Не могу открыть URL");
+            }
+
+            if (!string.IsNullOrEmpty(_proxyDomain))
+            {
+                var webProxy = new WebProxy(_proxyDomain, _proxyPort)
+                {
+                    BypassProxyOnLocal = true
+                };
+                webRequest.Proxy = webProxy;
+            }
+
+            webRequest.KeepAlive = true;
+            webRequest.Method = method;
+            webRequest.ContentType = "application/json; charset=utf-8";
+            webRequest.Accept = "application/json";
+            //webRequest.Credentials = CredentialCache.DefaultCredentials;
+            string encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(credentials.Login + ":" + credentials.Password));
+            webRequest.Headers.Add("Authorization", "Basic " + encoded);
+
+            ServicePointManager.ServerCertificateValidationCallback = AcceptAllCertifications;
             return webRequest;
         }
 
