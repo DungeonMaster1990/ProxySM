@@ -28,7 +28,7 @@ namespace ProxyAPI.Controllers
             //_helper.Authorize(credentials);
         }
 
-        [HttpGet("authorize")]
+        [HttpGet]
         public IActionResult Get()
         {
             throw new NotImplementedException();
