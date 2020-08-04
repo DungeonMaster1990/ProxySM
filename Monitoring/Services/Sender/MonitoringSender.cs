@@ -52,10 +52,14 @@ namespace Monitoring.Services
         private void SendToMonitoringAndReinitMonitoringItems()
         {
             foreach (var destination in _destinations)
-                destination.Send(_monitoringItems);
+                destination.Send(_monitoringItems, _dynamicGroups);
 
             foreach (var item in _monitoringItems)
                 item.Reinit();
+
+            foreach (var group in _dynamicGroups)
+                foreach (var item in group.MonitoringGroup.Values)
+                    item.Reinit();
         }
 
 
