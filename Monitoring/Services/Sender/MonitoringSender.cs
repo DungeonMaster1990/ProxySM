@@ -41,7 +41,7 @@ namespace Monitoring.Services
         {
             if (_token.IsCancellationRequested)
             {
-                SendToMonitoringAndReinitMonitoringItems();
+                SendToMonitoringAndReinitMonitoringItems();   
                 StopMonitoring();
                 return;
             }

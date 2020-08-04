@@ -10,10 +10,10 @@ namespace Monitoring.Services
     class NLogDestination : IDestination
     {
         private static ILogger _log = LogManager.GetLogger("Statistics");
-        
-        private const string _delimeter = "---------------------------------------------------------------------------------";
-        private IDictionary<string, List<int>> _dynamicGroupPropertiesIntends;
-        private IDictionary<string, int> _monitoringItemsPropertiesIntends;
+
+        private const char _delimeter = '-';
+        private  IDictionary<string, List<int>> _dynamicGroupPropertiesIntends;
+        private IDictionary<string, List<int>> _monitoringItemsPropertiesIntends;
         private int _typeIndent;
 
         public NLogDestination()
@@ -24,15 +24,14 @@ namespace Monitoring.Services
 
         private void CalculateIntendes(IEnumerable<MonitoringItemBase> items, IEnumerable<MonitoringDynamicGroup<MonitoringItemBase>> dynamicGroups)
         {
-            var groups = dynamicGroups.GroupBy(x => x.MonitoringGroup.Values.GetType().Name, x=>x.MonitoringGroup);
+            var groups = dynamicGroups.ToDictionary(x => x.MonitoringGroup.Values.GetType().Name, x => x.MonitoringGroup);
 
             var maxTypeName = Math.Max(groups.Max(x => x.Key.Length), items.Max(x => x.GetType().Name.Length));
             var typeIndent = maxTypeName + 5;
 
-            _dynamicGroupPropertiesIntends = groups.ToDictionary(x=>x.Key, x => x.First().MonitoringGroup.Values.First().Properties.Select(y => y.Key.Length).ToList());
+            _dynamicGroupPropertiesIntends = groups.ToDictionary(x => x.Key, x => x.Value.First().Value.Properties.Select(y => y.Key.Length).ToList());
 
-
-            var propertiesIntents = new List<int>();
+            _monitoringItemsPropertiesIntends = items.ToDictionary(x => x.GetType().Name, x => x.Properties.Select(y => y.Key.Length)).ToList();
         }
 
         public void Send(IEnumerable<MonitoringItemBase> items, IEnumerable<MonitoringDynamicGroup<MonitoringItemBase>> dynamicGroups)
@@ -40,11 +39,11 @@ namespace Monitoring.Services
 
         }
 
-        
+
 
         public string BuildLogBody(IList<MonitoringItemBase> items, IEnumerable<MonitoringDynamicGroup<MonitoringItemBase>> dynamicGroups)
         {
-            
+
 
 
 

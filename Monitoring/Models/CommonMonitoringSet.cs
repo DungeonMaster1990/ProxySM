@@ -18,7 +18,7 @@ namespace Monitoring.Models
             AppName = Assembly.GetExecutingAssembly().GetName().Name;
             Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             MachineName = Environment.MachineName;
-            Configuration = null;
+            Configuration = Assembly.GetExecutingAssembly().;
             JToken = JToken.FromObject(this);
         }
     }
