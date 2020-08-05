@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ProxyAPI.Monitoring
 {
-    public class ProxyAPIMonitoringItem : IMonitoringItem
+    public class ProxyAPIMonitoringItem : MonitoringItemBase
     {
         public IThreadSafeOperation CountOfRequests { get; set; } = new ThreadSafeCounter();
 

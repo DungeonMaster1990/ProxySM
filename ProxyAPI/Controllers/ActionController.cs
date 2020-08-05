@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Common.Helpers.ApiHelper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using NLog;
+using ProxyAPI.Monitoring;
 
 namespace ProxyAPI.Controllers
 {
@@ -14,11 +14,13 @@ namespace ProxyAPI.Controllers
     [ApiController]
     public class ActionController : ControllerBase
     {
-        private ILogger _log = LogManager.
+        private ILogger _log = LogManager.GetCurrentClassLogger();
         private IWebRequestHelper _helper;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public ActionController(IWebRequestHelper helper, IHttpContextAccessor httpContextAccessor)
+        private readonly IMonitoringSource<ProxyAPIMonitoringItem> _monitoring;
+        public ActionController(IWebRequestHelper helper, IHttpContextAccessor httpContextAccessor, IMonitoringSource<ProxyAPIMonitoringItem> monitoring)
         {
+            _monitoring = monitoring;
             _httpContextAccessor = httpContextAccessor;
             _helper = helper;
         }
@@ -26,6 +28,7 @@ namespace ProxyAPI.Controllers
         [HttpGet]
         public IActionResult SendDataToSMByGet(object data)
         {
+            _monitoring.Item.CountOfRequests++;
             //_httpContextAccessor.HttpContext.Request.Cookies["mock"]
             throw new NotImplementedException();
         }

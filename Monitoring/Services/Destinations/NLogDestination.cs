@@ -31,21 +31,17 @@ namespace Monitoring.Services
 
             _dynamicGroupPropertiesIntends = groups.ToDictionary(x => x.Key, x => x.Value.First().Value.Properties.Select(y => y.Key.Length).ToList());
 
-            _monitoringItemsPropertiesIntends = items.ToDictionary(x => x.GetType().Name, x => x.Properties.Select(y => y.Key.Length)).ToList();
+            _monitoringItemsPropertiesIntends = items.ToDictionary(x => x.GetType().Name, x => x.Properties.Select(y => y.Key.Length).ToList());
         }
 
         public void Send(IEnumerable<MonitoringItemBase> items, IEnumerable<MonitoringDynamicGroup<MonitoringItemBase>> dynamicGroups)
         {
-
+            var body = BuildLogBody(items, dynamicGroups);
+            _log.Info($"Statistics \n" + body);
         }
 
-
-
-        public string BuildLogBody(IList<MonitoringItemBase> items, IEnumerable<MonitoringDynamicGroup<MonitoringItemBase>> dynamicGroups)
+        public string BuildLogBody(IEnumerable<MonitoringItemBase> items, IEnumerable<MonitoringDynamicGroup<MonitoringItemBase>> dynamicGroups)
         {
-
-
-
 
             var sb = new StringBuilder();
 

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Monitoring.ConcurrentCounters
 {
-    interface IThreadSafeOperation
+    public interface IThreadSafeOperation
     {
         void Reinit();
     }
