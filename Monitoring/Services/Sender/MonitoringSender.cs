@@ -11,13 +11,14 @@ namespace Monitoring.Services
     {
         private readonly MonitoringOptions _monitoringOptions;
         private readonly IEnumerable<IDestination> _destinations;
-        private readonly IEnumerable<MonitoringItemBase> _monitoringItems;
         private readonly IEnumerable<MonitoringDynamicGroup<MonitoringItemBase>> _dynamicGroups;
         private readonly CancellationToken _token;
         private Timer _timer;
         private ManualResetEvent _timerDisposed;
-        public MonitoringSender(IOptions<MonitoringOptions> monitoringOptions, IEnumerable<MonitoringItemBase> monitoringItems, IEnumerable<MonitoringDynamicGroup<MonitoringItemBase>> dynamicGroups, IEnumerable<IDestination> destinations, CancellationToken token)
+        public MonitoringSender(IOptions<MonitoringOptions> monitoringOptions, IEnumerable<MonitoringItemBase> baseGroup, IList<MonitoringDynamicGroup<MonitoringItemBase>> dynamicGroups, IEnumerable<IDestination> destinations, CancellationToken token)
         {
+            var baseMonitoringGroup = new MonitoringDynamicGroup<>
+            dynamicGroups.Add(baseGroup)
             _monitoringOptions = monitoringOptions.Value;
             _token = token;
         }
@@ -54,11 +55,8 @@ namespace Monitoring.Services
             foreach (var destination in _destinations)
                 destination.Send(_monitoringItems, _dynamicGroups);
 
-            foreach (var item in _monitoringItems)
-                item.Reinit();
-
             foreach (var group in _dynamicGroups)
-                foreach (var item in group.MonitoringGroup.Values)
+                foreach (var item in group.MonitoringItems)
                     item.Reinit();
         }
 

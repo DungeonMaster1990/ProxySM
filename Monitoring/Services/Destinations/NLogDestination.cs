@@ -3,39 +3,59 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace Monitoring.Services
 {
-    class NLogDestination : IDestination
+    class LogDestination : BaseDestination
     {
         private static ILogger _log = LogManager.GetLogger("Statistics");
 
-        private const char _delimeter = '-';
-        private  IDictionary<string, List<int>> _dynamicGroupPropertiesIntends;
+        private const char _delimeterHoriontal = '-';
+        private const char _delimeterVertical = '|';
+        private IDictionary<string, List<int>> _dynamicGroupPropertiesIntends;
         private IDictionary<string, List<int>> _monitoringItemsPropertiesIntends;
-        private int _typeIndent;
+        private int _baseNameIntend;
 
-        public NLogDestination()
+
+        public LogDestination(IEnumerable<MonitoringItemBase> monitoringItems, IEnumerable<MonitoringDynamicGroup<MonitoringItemBase>> dynamicGroups) : base(monitoringItems, dynamicGroups)
         {
-            _dynamicGroupPropertiesIntends = new Dictionary<string, List<int>>();
-
+            monitoringItems = _monitoringItems;
+            dynamicGroups = _dynamicGroups;
         }
 
-        private void CalculateIntendes(IEnumerable<MonitoringItemBase> items, IEnumerable<MonitoringDynamicGroup<MonitoringItemBase>> dynamicGroups)
+        private (int maxLengthGroupName, IDictionary<string, List<int>> dynamicGroupsIntends) CalculateIntendesDynamicGroups()
         {
-            var groups = dynamicGroups.ToDictionary(x => x.MonitoringGroup.Values.GetType().Name, x => x.MonitoringGroup);
+            var intends = _dynamicGroups.ToDictionary(x => x.Name, x => x.MonitoringItems.First().Properties.Keys.Select(y => y.Length).ToList());
 
-            var maxTypeName = Math.Max(groups.Max(x => x.Key.Length), items.Max(x => x.GetType().Name.Length));
-            var typeIndent = maxTypeName + 5;
+            var maxGroupNameLength = _dynamicGroups.Max(x => x.Name.Length);
 
-            _dynamicGroupPropertiesIntends = groups.ToDictionary(x => x.Key, x => x.Value.First().Value.Properties.Select(y => y.Key.Length).ToList());
-
-            _monitoringItemsPropertiesIntends = items.ToDictionary(x => x.GetType().Name, x => x.Properties.Select(y => y.Key.Length).ToList());
+            return (maxGroupNameLength, intends);
         }
 
-        public void Send(IEnumerable<MonitoringItemBase> items, IEnumerable<MonitoringDynamicGroup<MonitoringItemBase>> dynamicGroups)
+        private (int maxLengthItemName, IDictionary<string, List<int>> monitoringItemsPropertiesIntends) CalculateBasicIntendes()
         {
+            var intends = _monitoringItems.ToDictionary(x => x.Name, x => x.Properties.Keys.Select(y => y.Length).ToList());
+            var maxNameLength = _monitoringItems.Max(x => x.Name.Length);
+            return (maxNameLength, intends);
+        }
+
+        private void CalculateIntends()
+        {
+            var (maxLengthGroupName, dynamicGroupsIntends) = CalculateIntendesDynamicGroups();
+            var (maxLengthItemName, monitoringItemsPropertiesIntends) = CalculateBasicIntendes();
+            _baseNameIntend = Math.Max(maxLengthGroupName, maxLengthItemName);
+            _dynamicGroupPropertiesIntends = dynamicGroupsIntends;
+            _monitoringItemsPropertiesIntends = monitoringItemsPropertiesIntends;
+        }
+
+        public override void Send()
+        {
+            if (_dynamicGroups.Any(x => x.CheckAdded()))
+                CalculateIntends();
+
+
             var body = BuildLogBody(items, dynamicGroups);
             _log.Info($"Statistics \n" + body);
         }

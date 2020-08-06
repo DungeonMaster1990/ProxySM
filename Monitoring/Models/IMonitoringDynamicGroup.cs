@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Monitoring.Models
 {
     interface IMonitoringDynamicGroup<T> where T : MonitoringItemBase
     {
-        IDictionary<string, T> MonitoringGroup { get; }
+        IList<T> MonitoringItems { get; }
+        string Name { get; }
     }
 }

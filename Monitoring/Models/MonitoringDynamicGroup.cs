@@ -1,25 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Monitoring.Models
 {
     public class MonitoringDynamicGroup<T>: IMonitoringDynamicGroup<T> where T : MonitoringItemBase
     {
-        public IDictionary<string, T> MonitoringGroup { get; }
+        public IList<T> MonitoringItems { get; }
         private bool _addedNewGroups = false;
-        public MonitoringDynamicGroup()
+        public string Name { get; }
+        public MonitoringDynamicGroup(string name)
         {
-            MonitoringGroup = new Dictionary<string, T>();
+            Name = name;
+            MonitoringItems = new List<T>();
         }
 
-        public void AddNewGroup(string groupName, T monitoringItem)
+        public void Add(T monitoringItem)
         {
-            MonitoringGroup.Add(groupName, monitoringItem);
+            MonitoringItems.Add(monitoringItem);
             _addedNewGroups = true;
         }
 
-        public bool CheckNewGroupsAdded()
+        public bool CheckAdded()
         {
             if (_addedNewGroups)
             {
