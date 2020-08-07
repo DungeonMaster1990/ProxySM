@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Monitoring.Extensions;
 using Monitoring.Models;
 using Monitoring.Services;
 using Monitoring.Services.Sender;
@@ -38,7 +34,6 @@ namespace Monitoring
             services.AddSingleton(commonSet);
 
             return services;
-
         }
     }
 }
