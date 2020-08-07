@@ -1,5 +1,4 @@
-﻿using System;
-using Common.Helpers.ApiHelper;
+﻿using Common.Helpers.ApiHelper;
 using Common.Models.ConfigModels;
 using Common.Models.VmModels;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +13,7 @@ namespace ProxyAPI.Controllers
         private IWebRequestHelper _helper;
         private SMApiConfigurationModel _smApiConfigModel;
 
-        public AuthorizeController (IWebRequestHelper helper, IOptions<SMApiConfigurationModel> smApiConfigModel)
+        public AuthorizeController(IWebRequestHelper helper, IOptions<SMApiConfigurationModel> smApiConfigModel)
         {
             _helper = helper;
             _smApiConfigModel = smApiConfigModel.Value;
@@ -22,17 +21,17 @@ namespace ProxyAPI.Controllers
 
 
         [HttpPost]
-        public IActionResult Authorize(VmAuthorizeCredentials credentials)
+        public string Authorize(VmAuthorizeCredentials credentials)
         {
-            throw new NotImplementedException();
-            //_helper.Authorize(credentials);
+            var session = _helper.WebApiAuthorizeRequestPost<string>(_smApiConfigModel.ApiAddress, credentials);
+            return session;
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public string Get(VmAuthorizeCredentials credentials)
         {
-            throw new NotImplementedException();
-            //_helper.Authorize(credentials);
+            var session = _helper.WebApiAuthorizeRequestGet<string>(_smApiConfigModel.ApiAddress, credentials);
+            return session;
         }
     }
 }
