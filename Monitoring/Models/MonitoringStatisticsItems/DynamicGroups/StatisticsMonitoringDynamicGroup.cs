@@ -1,16 +1,22 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Monitoring.Models
 {
-    public class MonitoringDynamicGroup<T>: IMonitoringDynamicGroup<T> where T : MonitoringItemBase
+    public class StatisticsMonitoringDynamicGroup<T> : IStatisticsMonitoringDynamicGroup<T> where T : IMonitoringItem
     {
         public IDictionary<string, T> MonitoringItems { get; }
         private bool _addedNewGroups = false;
         public string Name { get; }
-        public MonitoringDynamicGroup(string name)
+
+        public StatisticsMonitoringDynamicGroup(string name, IEnumerable<T> items)
         {
             Name = name;
-            MonitoringItems = new Dictionary<string, T>();
+
+            if (items == null)
+                MonitoringItems = new Dictionary<string, T>();
+            else
+                MonitoringItems = items.ToDictionary(x => x.Name, x=>(T)x);
         }
 
         public void Add(T monitoringItem)
