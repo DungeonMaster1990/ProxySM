@@ -1,22 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Monitoring.Models
 {
     public class StatisticsMonitoringGroup<T> : IStatisticsMonitoringGroup<T> where T : IMonitoringItem
     {
-        public IDictionary<string, T> MonitoringItems { get; }
+        public IDictionary<string, T> MonitoringItems { get; internal set; }
         private bool _addedNewGroups = false;
         public string Name { get; }
 
-        public StatisticsMonitoringGroup(string name, IEnumerable<T> items)
+        public StatisticsMonitoringGroup(string name)
         {
             Name = name;
-
-            if (items == null)
-                MonitoringItems = new Dictionary<string, T>();
-            else
-                MonitoringItems = items.ToDictionary(x => x.Name, x=>(T)x);
+            MonitoringItems = new ConcurrentDictionary<string, T>();
         }
 
         public void Add(T monitoringItem)

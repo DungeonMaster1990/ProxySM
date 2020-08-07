@@ -12,7 +12,7 @@ namespace ProxyAPI
     public class Startup
     {
         private IWebHostEnvironment _hostingEnvironment;
-        private IServiceProvider _serviceProvider;
+        public IServiceProvider _serviceProvider;
         public Startup(IWebHostEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
