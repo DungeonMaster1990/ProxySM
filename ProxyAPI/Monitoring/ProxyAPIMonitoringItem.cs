@@ -4,16 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Monitoring.Models.MonitoringItems;
 
 namespace ProxyAPI.Monitoring
 {
-    public class ProxyAPIMonitoringItem : MonitoringItemBase
+    public class ProxyAPIMonitoringItem : StatisticsMonitoringItemBase
     {
-        public IThreadSafeOperation CountOfRequests { get; set; } = new ThreadSafeCounter();
-
-        public void Clear()
-        {
-            throw new NotImplementedException();
-        }
+        public ThreadSafeCounter CountOfRequests { get; set; } = new ThreadSafeCounter();
+        public ThreadSafeCounter CountOfFailedRequests { get; set; } = new ThreadSafeCounter();
     }
 }

@@ -7,7 +7,7 @@ namespace Monitoring.ConcurrentCounters
     /// <summary>
     /// Не сбрасывается при реинициализации
     /// </summary>
-    public class TreadSafeTotalCounter: ThreadSafeCounter
+    public class ThreadSafeTotalCounter: ThreadSafeCounter
     {
         public override void Reinit()
         {

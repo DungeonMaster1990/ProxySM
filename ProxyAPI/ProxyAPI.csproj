@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MethodDecoratorEx.Fody" Version="0.9.0.5" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.6" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.1.6" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.1.6" />
@@ -16,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\Monitoring\Monitoring.csproj" />
   </ItemGroup>
 
 
