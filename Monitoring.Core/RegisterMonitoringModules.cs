@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,26 +14,31 @@ namespace Monitoring
 {
     public static class RegisterMonitoringModules
     {
-        public static IServiceCollection RegisterMonitoringBase(IServiceCollection services, string environmentName, StatisticsItemsFullSet set)
+        public static IServiceCollection RegisterMonitoringBase(this IServiceCollection services, string environmentName, BaseStatisticsItemsSet baseStatisticsItems)
         {
-            set.ForEach(x => services.AddSingleton(x.GetType()));
-            
             services.AddSingleton<IMonitoringSender, MonitoringSender>();
             services.AddSingleton<IStatisticsSender, StatisticsSender>();
             services.AddSingleton<JsonNLogDestination>();
             services.AddSingleton<LogDestination>();
+            var groups = new ConcurrentDictionary<string, StatisticsMonitoringGroup<StatisticsMonitoringItemBase>>();
+            services.AddSingleton(groups);
+            var statItems = baseStatisticsItems.GetAllStatisticsMonitoringItems();
+
+            foreach (var item in statItems)
+                services.AddSingleton(item);
+
+            var items = new ConcurrentDictionary<string, StatisticsMonitoringItemBase>(
+                statItems.Select(x => new KeyValuePair<string, StatisticsMonitoringItemBase>(x.Name, x)));
+
+            services.AddSingleton(items);
+            var set = new StatisticsItemsFullSet(items, groups);
             services.AddSingleton(set);
+
             var commonSet = new CommonMonitoringSet(environmentName);
             services.AddSingleton(commonSet);
 
             return services;
 
-        }
-
-        public static IServiceCollection RegisterStatisticsItemsFullSet(IServiceCollection services,
-            StatisticsItemsFullSet set)
-        {
-            
         }
     }
 }

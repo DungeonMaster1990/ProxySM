@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Monitoring.Core
 {
+    /// <summary>
+    /// [ServiceFilterAttribute(typeof(MonitoringSendRequestFilter))]
+    /// </summary>
     public class MonitoringSendRequestFilter: Attribute, IAsyncActionFilter
     {
         private readonly RequestMonitoringItem _item;

@@ -12,7 +12,7 @@ namespace Monitoring.Extensions
 
         public static void ForEach(this StatisticsItemsFullSet items, Action<StatisticsMonitoringItemBase> action)
         {
-            foreach (var group in items.DynamicGroups.Values)
+            foreach (var group in items.Groups.Values)
             foreach (var item in group.MonitoringItems.Values)
                 action(item);
 
