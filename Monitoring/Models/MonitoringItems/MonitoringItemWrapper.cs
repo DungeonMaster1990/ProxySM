@@ -3,25 +3,25 @@
 
 namespace Monitoring.Models
 {
-    internal class MonitoringItemWrapper
+    public class MonitoringItemWrapper<T> where T : IMonitoringItem
     {
         private CommonMonitoringSet _commonSet;
-        private IMonitoringItem _monitoringItem;
+        public T Item;
 
-        public MonitoringItemWrapper(IMonitoringItem monitoringItem, CommonMonitoringSet commonSet)
+        public MonitoringItemWrapper(T monitoringItem, CommonMonitoringSet commonSet)
         {
-            _monitoringItem = monitoringItem;
+            Item = monitoringItem;
             _commonSet = commonSet;
         }
 
-        public string GetJson()
-        {
-            var monitoringJO = JObject.FromObject(_monitoringItem);
-            var commonSet =  JToken.FromObject(_commonSet);
-            monitoringJO.AddAfterSelf(commonSet);
+        //public string GetJson()
+        //{
+        //    var monitoringJO = JObject.FromObject(_monitoringItem);
+        //    var commonSet = JToken.FromObject(_commonSet);
+        //    monitoringJO.AddAfterSelf(commonSet);
 
 
-            return monitoringJO.ToString();
-        }
+        //    return monitoringJO.ToString();
+        //}
     }
 }

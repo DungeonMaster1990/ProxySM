@@ -3,13 +3,13 @@ using System.Linq;
 
 namespace Monitoring.Models
 {
-    public class StatisticsMonitoringDynamicGroup<T> : IStatisticsMonitoringDynamicGroup<T> where T : IMonitoringItem
+    public class StatisticsMonitoringGroup<T> : IStatisticsMonitoringGroup<T> where T : IMonitoringItem
     {
         public IDictionary<string, T> MonitoringItems { get; }
         private bool _addedNewGroups = false;
         public string Name { get; }
 
-        public StatisticsMonitoringDynamicGroup(string name, IEnumerable<T> items)
+        public StatisticsMonitoringGroup(string name, IEnumerable<T> items)
         {
             Name = name;
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Monitoring.Models.MonitoringStatisticsItems
+﻿namespace Monitoring.Models
 {
     public interface IStatisticsMonitoringWrapper<out T> where T: StatisticsMonitoringItemBase
     {

@@ -2,7 +2,7 @@
 
 namespace Monitoring.Models
 {
-    interface IStatisticsMonitoringDynamicGroup<T> where T : IMonitoringItem
+    interface IStatisticsMonitoringGroup<T> where T : IMonitoringItem
     {
         IDictionary<string, T> MonitoringItems { get; }
     }

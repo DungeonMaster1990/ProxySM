@@ -16,17 +16,16 @@ namespace Monitoring.Services
 
         private readonly CancellationToken _token;
         private Timer _timer = null;
-        private StatisticsItemsFullSet _statisticItems;
+        private StatisticsItemsFullSet _fullSet;
         private ManualResetEvent _timerDisposed;
 
         public StatisticsSender(
             IOptions<MonitoringOptions> monitoringOptions,
             StatisticsItemsFullSet statisticItems,
-            IMonitoringSender sender,
             CancellationToken token)
         {
             _monitoringOptions = monitoringOptions.Value;
-            _statisticItems = statisticItems;
+            _fullSet = statisticItems;
             _token = token;
 
             if (_monitoringOptions.RunImmediately)
@@ -55,20 +54,20 @@ namespace Monitoring.Services
         {
             if (_token.IsCancellationRequested)
             {
-                SendToReInitMonitoringItems();
+                SendAndReInitMonitoringItems();
                 StopMonitoring();
                 return;
             }
 
-            SendToReInitMonitoringItems();
+            SendAndReInitMonitoringItems();
         }
 
-        private void SendToReInitMonitoringItems()
+        private void SendAndReInitMonitoringItems()
         {
             foreach (var destination in _destinations)
-                destination.SendStatistics(_statisticItems);
+                destination.SendStatistics(_fullSet);
 
-            _statisticItems.ReInit();
+            _fullSet.ReInit();
         }
 
         public void Dispose()
