@@ -8,10 +8,10 @@ namespace Monitoring.Models
         public readonly IDictionary<string, StatisticsMonitoringGroup<StatisticsMonitoringItemBase>> Groups;
 
         public StatisticsItemsFullSet(IDictionary<string, StatisticsMonitoringItemBase> items,
-            IDictionary<string, StatisticsMonitoringGroup<StatisticsMonitoringItemBase>> dynamicGroups)
+            IDictionary<string, StatisticsMonitoringGroup<StatisticsMonitoringItemBase>> groups)
         {
             Items = items;
-            Groups = dynamicGroups;
+            Groups = groups;
         }
     }
 }
