@@ -21,9 +21,11 @@ namespace Monitoring.Services
 
         public StatisticsSender(
             IOptions<MonitoringOptions> monitoringOptions,
+            IEnumerable<IDestination> destinations,
             StatisticsItemsFullSet statisticItems,
             CancellationToken token)
         {
+            _destinations = destinations;
             _monitoringOptions = monitoringOptions.Value;
             _fullSet = statisticItems;
             _token = token;

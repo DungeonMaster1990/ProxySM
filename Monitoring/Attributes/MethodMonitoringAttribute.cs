@@ -1,12 +1,7 @@
 ﻿using MethodBoundaryAspect.Fody.Attributes;
 using Monitoring.Attributes.BaseAttribute;
 using Monitoring.Models;
-using NLog;
 using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace Monitoring.Attributes
 {
@@ -19,12 +14,13 @@ namespace Monitoring.Attributes
         {
         }
 
-        public void OnEntry(MethodExecutionArgs args)
+        public override void AfterEntry(MethodExecutionArgs args)
         {
-            _method = args.Method;
+            
             _monitoringItem.Entries++;
             _monitoringItem.Watcher.Start();
         }
+
         public override void OnExit(MethodExecutionArgs args)
         {
             _monitoringItem.Exits++;
@@ -35,10 +31,6 @@ namespace Monitoring.Attributes
         {
             _monitoringItem.Errors++;
             _monitoringItem.Watcher.Stop();
-        }
-
-        public override void CreateGroup()
-        {
         }
     }
 }

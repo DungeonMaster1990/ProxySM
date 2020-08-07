@@ -2,7 +2,6 @@
 using System;
 using System.Reflection;
 using MethodBoundaryAspect.Fody.Attributes;
-using System.Collections.Generic;
 
 namespace Monitoring.Attributes.BaseAttribute
 {
@@ -11,36 +10,65 @@ namespace Monitoring.Attributes.BaseAttribute
     {
         protected readonly StatisticsItemsFullSet _statisticsItemsFullSet;
         protected MethodBase _method;
-        protected StatisticsMonitoringGroup<StatisticsMonitoringItemBase> _group;
+        /// <summary>
+        /// тип мониторингового объекта
+        /// </summary>
         protected Type _itemType;
 
-        public BaseMethodMonitoringAttribute(StatisticsItemsFullSet statisticsItemsFullSet, Type itemType)
+        public BaseMethodMonitoringAttribute(StatisticsItemsFullSet statisticsItemsFullSet)
         {
             _statisticsItemsFullSet = statisticsItemsFullSet;
-            _itemType = itemType;
         }
 
-        public virtual void OnEntry(MethodExecutionArgs args)
+        internal new void OnEntry(MethodExecutionArgs args)
         {
-            if (_statisticsItemsFullSet.Groups.ContainsKey(this.GetType().FullName))
-                _group = _statisticsItemsFullSet.Groups[this.GetType().FullName];
+            _method = args.Method;
+            StatisticsMonitoringGroup<StatisticsMonitoringItemBase> group;
+            var name = this.GetType().Name.Replace("Attribute", "");
+
+            if (_statisticsItemsFullSet.Groups.ContainsKey(name))
+            {
+                group = _statisticsItemsFullSet.Groups[name];
+                if (!group.MonitoringItems.ContainsKey(args.Method.Name))
+                {
+                    group.MonitoringItems[args.Method.Name] = CreateMonitoringItem();
+                }
+            }
             else
-                CreateGroup();
+            {
+                group = CreateGroup();
+                _statisticsItemsFullSet.Groups[name] = group;
+                group.MonitoringItems[args.Method.Name] = CreateMonitoringItem();
+            }
+
+            AfterEntry(args);
         }
 
-        public virtual void OnException(MethodExecutionArgs args)
-        { }
+        public abstract void AfterEntry(MethodExecutionArgs args);
 
-        public virtual void OnExit(MethodExecutionArgs args)
-        { }
+        public abstract override void OnException(MethodExecutionArgs args);
 
-        public virtual void CreateGroup()
+        public abstract override void OnExit(MethodExecutionArgs args);
+
+        public abstract StatisticsMonitoringGroup<T> CreateGroup<T>()
+            where T : StatisticsMonitoringItemBase;
+        //{
+        //    if (!_itemType.IsAssignableFrom(typeof(StatisticsMonitoringItemBase)))
+        //        throw new Exception("Type of monitoringItem should be inherited from base");
+
+        //    Type dictType = typeof(ConcurrentDictionary<,>);
+            
+        //    Type[] genericTypesOfDictType = { typeof(string), _itemType };
+
+        //    Type concurrentDictType = dictType.MakeGenericType(genericTypesOfDictType);
+        //    var x = (ConcurrentDictionary<StatisticsMonitoringGroup, >)Activator.CreateInstance(concurrentDictType, new object[] { this.GetType().Name });
+
+        //    return (StatisticsMonitoringGroup<StatisticsMonitoringItemBase>)
+        //}
+
+        private StatisticsMonitoringItemBase CreateMonitoringItem()
         {
-            var item = Activator.CreateInstance(_itemType);
-            Type generic = typeof(Dictionary<,>);           
-            Type[] typeArgs = { typeof(string), _itemType };
-            Type constructed = generic.MakeGenericType(typeArgs);
-            _group = (StatisticsMonitoringGroup<StatisticsMonitoringItemBase>)Activator.CreateInstance(constructed, new object[] { this.GetType().Name, item });
+            return (StatisticsMonitoringItemBase)Activator.CreateInstance(_itemType);
         }
     }
 }

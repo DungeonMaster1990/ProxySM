@@ -8,17 +8,21 @@ using Monitoring.Services.Sender;
 
 namespace Monitoring
 {
-    public static class RegisterMonitoringModules
+    public static class RegisterMonitoringModules 
     {
-        public static IServiceCollection RegisterMonitoringBase(this IServiceCollection services, string environmentName, BaseStatisticsItemsSet baseStatisticsItems)
+        public static IServiceCollection RegisterMonitoring<Monitoring>(this IServiceCollection services, string environmentName)
+        where Monitoring : class
         {
+            services.AddSingleton<Monitoring>();
             services.AddSingleton<IMonitoringSender, MonitoringSender>();
             services.AddSingleton<IStatisticsSender, StatisticsSender>();
             services.AddSingleton<JsonNLogDestination>();
             services.AddSingleton<LogDestination>();
             var groups = new ConcurrentDictionary<string, StatisticsMonitoringGroup<StatisticsMonitoringItemBase>>();
             services.AddSingleton(groups);
-            var statItems = baseStatisticsItems.GetAllStatisticsMonitoringItems();
+            var statItems = typeof(Monitoring).GetProperties()
+                .Where(p => p.GetType().IsAssignableFrom(typeof(StatisticsMonitoringItemBase)))
+                .Select(x => x.GetValue(x) as StatisticsMonitoringItemBase).ToList();
 
             foreach (var item in statItems)
                 services.AddSingleton(item);

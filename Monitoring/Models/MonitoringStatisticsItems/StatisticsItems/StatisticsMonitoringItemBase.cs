@@ -11,13 +11,13 @@ namespace Monitoring.Models
         public string Name { get; }
 
         [JsonIgnore]
-        internal readonly IDictionary<string, IThreadSafeOperation> Properties;
+        internal readonly IDictionary<string, IReinitableThreadSafeOperation> Properties;
 
         public StatisticsMonitoringItemBase()
         {
             Properties = GetType().GetProperties()
-                .Where(p => p.GetType().IsAssignableFrom(typeof(IThreadSafeOperation)))
-                .ToDictionary(x => x.Name, x => x.GetValue(x) as IThreadSafeOperation); 
+                .Where(p => p.GetType().IsAssignableFrom(typeof(IReinitableThreadSafeOperation)))
+                .ToDictionary(x => x.Name, x => x.GetValue(x) as IReinitableThreadSafeOperation); 
             
             Name = this.GetType().Name;
         }
@@ -25,7 +25,7 @@ namespace Monitoring.Models
         internal void ReInit()
         {
             foreach (var monitoringItemProperty in Properties.Values)
-                monitoringItemProperty.Reinit();
+                monitoringItemProperty.ReInit();
         }
 
         public JObject GetJObject()

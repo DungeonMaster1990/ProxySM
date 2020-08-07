@@ -18,17 +18,17 @@ namespace ProxyAPI.Controllers
         private ILogger _log = LogManager.GetCurrentClassLogger();
         private IWebRequestHelper _helper;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly Monitoring _monitoring;
-        public ActionController(IWebRequestHelper helper, IHttpContextAccessor httpContextAccessor)
+        private readonly ProxyAPIMonitoring _monitoring;
+        public ActionController(IWebRequestHelper helper, ProxyAPIMonitoring monitoring)
         {
-            _httpContextAccessor = httpContextAccessor;
+            _monitoring = monitoring;
             _helper = helper;
         }
 
         [HttpGet]
         public IActionResult SendDataToSMByGet(object data)
         {
-            _monitoring.ProxyAPIMonitoringItem
+            _monitoring.BasicMonitoring.CountOfRequests
             //_httpContextAccessor.HttpContext.Request.Cookies["mock"]
             throw new NotImplementedException();
         }

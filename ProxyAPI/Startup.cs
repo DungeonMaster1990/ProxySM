@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using dh = Common.Helpers.DependencyHelper;
 using Common.Models.ConfigModels;
+using Monitoring;
+using ProxyAPI.Monitoring;
 
 namespace ProxyAPI
 {
@@ -31,7 +33,7 @@ namespace ProxyAPI
         {
             services.AddMvc();
             services.AddControllers();
-
+            services.RegisterMonitoring("dev", new ProxyAPIMonitoring(),)
             services.AddHttpContextAccessor();
             services.AddSwaggerGen();
             services.Configure<SMApiConfigurationModel>(Configuration.GetSection("SMApiConfig"));

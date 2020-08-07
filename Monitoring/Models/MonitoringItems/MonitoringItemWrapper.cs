@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
 
-
 namespace Monitoring.Models
 {
     public class MonitoringItemWrapper<T> where T : IMonitoringItem
@@ -14,14 +13,13 @@ namespace Monitoring.Models
             _commonSet = commonSet;
         }
 
-        //public string GetJson()
-        //{
-        //    var monitoringJO = JObject.FromObject(_monitoringItem);
-        //    var commonSet = JToken.FromObject(_commonSet);
-        //    monitoringJO.AddAfterSelf(commonSet);
+        public string GetJson()
+        {
+            var monitoringJO = JObject.FromObject(Item);
+            var commonSet = JToken.FromObject(_commonSet);
+            monitoringJO.AddAfterSelf(commonSet);
 
-
-        //    return monitoringJO.ToString();
-        //}
+            return monitoringJO.ToString();
+        }
     }
 }

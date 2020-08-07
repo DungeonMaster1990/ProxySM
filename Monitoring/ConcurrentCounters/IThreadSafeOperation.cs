@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Monitoring.ConcurrentCounters
+﻿namespace Monitoring.ConcurrentCounters
 {
-    public interface IThreadSafeOperation
+    public interface IThreadSafeOperation<T>: IReinitableThreadSafeOperation where T : struct
     {
-        void Reinit();
+        void Add(T item);
+        T Value { get; }
     }
 }

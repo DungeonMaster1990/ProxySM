@@ -5,9 +5,9 @@ namespace Monitoring.Models
 {
     class MonitoringItemEntryCounter : StatisticsMonitoringItemBase
     {
-        public ThreadSafeCounter Entries { get; set; } = new ThreadSafeCounter();
-        public ThreadSafeCounter Exits { get; set; } = new ThreadSafeCounter();
-        public ThreadSafeCounter Errors { get; set; } = new ThreadSafeCounter();
-        public Stopwatch Watcher { get; set; } = new System.Diagnostics.Stopwatch();
+        public ReinitableThreadSafeCounter Entries { get; set; } = new ReinitableThreadSafeCounter();
+        public ReinitableThreadSafeCounter Exits { get; set; } = new ReinitableThreadSafeCounter();
+        public ReinitableThreadSafeCounter Errors { get; set; } = new ReinitableThreadSafeCounter();
+        public Stopwatch Watcher { get; set; } = new Stopwatch();
     }
 }

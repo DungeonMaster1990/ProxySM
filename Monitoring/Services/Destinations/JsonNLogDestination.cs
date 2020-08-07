@@ -24,13 +24,12 @@ namespace Monitoring.Services
 
         public void SendStatistics(StatisticsItemsFullSet items)
         {
-            var methodName = nameof(SendStatistics);
             items.ForEach(x=>SendOneItem(_log, x));
         }
 
         public void SendOneItem(ILogger log, IMonitoringItem monitoringItem)
         {
-            var wrappedItem = new MonitoringItemWrapper(monitoringItem, _commonMonitoringSet);
+            var wrappedItem = new MonitoringItemWrapper<IMonitoringItem>(monitoringItem, _commonMonitoringSet);
             var loggerName = $"{_prefix}.{log.Name}";
             //loggers are cached in NLog core
             var jsonLog = LogManager.GetLogger(loggerName);
