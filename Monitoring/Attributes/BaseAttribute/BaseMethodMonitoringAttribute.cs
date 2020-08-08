@@ -1,5 +1,6 @@
 ﻿using Monitoring.Models;
 using System;
+using System.Linq;
 using System.Reflection;
 using MethodBoundaryAspect.Fody.Attributes;
 
@@ -8,39 +9,26 @@ namespace Monitoring.Attributes.BaseAttribute
     [AttributeUsage(AttributeTargets.Method)]
     public abstract class BaseMethodMonitoringAttribute : OnMethodBoundaryAspect
     {
-        protected readonly StatisticsItemsFullSet _statisticsItemsFullSet;
+        protected readonly StatisticsItemsFullSet _set;
         protected MethodBase _method;
         /// <summary>
         /// тип мониторингового объекта
         /// </summary>
         protected Type _itemType;
 
-        public BaseMethodMonitoringAttribute(StatisticsItemsFullSet statisticsItemsFullSet)
+        public BaseMethodMonitoringAttribute(StatisticsItemsFullSet set, Type itemType)
         {
-            _statisticsItemsFullSet = statisticsItemsFullSet;
+            _itemType = itemType;
+            _set = set;
         }
 
         internal new void OnEntry(MethodExecutionArgs args)
         {
-            _method = args.Method;
-            StatisticsMonitoringGroup<StatisticsMonitoringItemBase> group;
-            var name = this.GetType().Name.Replace("Attribute", "");
-
-            if (_statisticsItemsFullSet.Groups.ContainsKey(name))
-            {
-                group = _statisticsItemsFullSet.Groups[name];
-                if (!group.MonitoringItems.ContainsKey(args.Method.Name))
-                {
-                    group.MonitoringItems[args.Method.Name] = CreateMonitoringItem();
-                }
-            }
-            else
-            {
-                group = CreateGroup();
-                _statisticsItemsFullSet.Groups[name] = group;
-                group.MonitoringItems[args.Method.Name] = CreateMonitoringItem();
-            }
-
+            var method = _set.GetType().GetMethods().First(x => x.Name == nameof(_set.GetOrCreateMonitoringGroup));
+            var genericMethod = method.MakeGenericMethod(_itemType);
+            var groupWrapped = genericMethod.Invoke(_set, new[] {this.GetType().Name});
+            
+            //_set
             AfterEntry(args);
         }
 

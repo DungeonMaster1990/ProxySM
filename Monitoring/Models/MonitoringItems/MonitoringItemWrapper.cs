@@ -2,7 +2,7 @@
 
 namespace Monitoring.Models
 {
-    public class MonitoringItemWrapper<T> where T : IMonitoringItem
+    internal class MonitoringItemWrapper<T> where T : IMonitoringItem
     {
         private CommonMonitoringSet _commonSet;
         public T Item;
@@ -16,7 +16,7 @@ namespace Monitoring.Models
         public string GetJson()
         {
             var monitoringJO = JObject.FromObject(Item);
-            var commonSet = JToken.FromObject(_commonSet);
+            var commonSet = JObject.FromObject(_commonSet);
             monitoringJO.AddAfterSelf(commonSet);
 
             return monitoringJO.ToString();

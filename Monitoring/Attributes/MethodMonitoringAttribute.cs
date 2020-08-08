@@ -27,6 +27,11 @@ namespace Monitoring.Attributes
             _monitoringItem.Watcher.Stop();
         }
 
+        public override StatisticsMonitoringGroup<T> CreateGroup<T>()
+        {
+            throw new NotImplementedException();
+        }
+
         public override void OnException(MethodExecutionArgs args)
         {
             _monitoringItem.Errors++;

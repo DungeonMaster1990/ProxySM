@@ -1,9 +1,6 @@
-﻿using System.Collections.Concurrent;
-using Monitoring.Models;
+﻿using Monitoring.Models;
 using NLog;
-using System.Collections.Generic;
 using Monitoring.Extensions;
-using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Options;
 using Monitoring.Configurations;
 

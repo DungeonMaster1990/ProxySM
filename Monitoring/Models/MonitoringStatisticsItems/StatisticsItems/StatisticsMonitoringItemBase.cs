@@ -8,18 +8,21 @@ namespace Monitoring.Models
 {
     public abstract class StatisticsMonitoringItemBase : IMonitoringItem
     {
-        public string Name { get; }
+        public string Name { get; set; }
 
         [JsonIgnore]
         internal readonly IDictionary<string, IReinitableThreadSafeOperation> Properties;
 
-        public StatisticsMonitoringItemBase()
+        public StatisticsMonitoringItemBase(string name = null)
         {
             Properties = GetType().GetProperties()
-                .Where(p => p.GetType().IsAssignableFrom(typeof(IReinitableThreadSafeOperation)))
-                .ToDictionary(x => x.Name, x => x.GetValue(x) as IReinitableThreadSafeOperation); 
+                .Where(p => typeof(IReinitableThreadSafeOperation).IsAssignableFrom(p.PropertyType))
+                .ToDictionary(x => x.Name, x => (IReinitableThreadSafeOperation)x.GetValue(this));
             
-            Name = this.GetType().Name;
+            if (name != null)
+                Name = name;
+            else
+                Name = this.GetType().Name;
         }
 
         internal void ReInit()

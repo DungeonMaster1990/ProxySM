@@ -33,7 +33,7 @@ namespace ProxyAPI
         {
             services.AddMvc();
             services.AddControllers();
-            services.RegisterMonitoring("dev", new ProxyAPIMonitoring(),)
+            services.RegisterMonitoring<ProxyAPIMonitoring>("dev");
             services.AddHttpContextAccessor();
             services.AddSwaggerGen();
             services.Configure<SMApiConfigurationModel>(Configuration.GetSection("SMApiConfig"));

@@ -1,6 +1,8 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Monitoring.Models;
 using Monitoring.Services;
@@ -18,19 +20,22 @@ namespace Monitoring
             services.AddSingleton<IStatisticsSender, StatisticsSender>();
             services.AddSingleton<JsonNLogDestination>();
             services.AddSingleton<LogDestination>();
+            
             var groups = new ConcurrentDictionary<string, StatisticsMonitoringGroup<StatisticsMonitoringItemBase>>();
-            services.AddSingleton(groups);
+            services.AddSingleton<IDictionary<string, StatisticsMonitoringGroup<StatisticsMonitoringItemBase>>>(groups);
+
             var statItems = typeof(Monitoring).GetProperties()
-                .Where(p => p.GetType().IsAssignableFrom(typeof(StatisticsMonitoringItemBase)))
-                .Select(x => x.GetValue(x) as StatisticsMonitoringItemBase).ToList();
+                .Where(p => typeof(StatisticsMonitoringItemBase).IsAssignableFrom(p.PropertyType))
+                .Select(x =>
+                    (StatisticsMonitoringItemBase) Activator.CreateInstance(x.PropertyType))
+                .Select(x => new KeyValuePair<string, StatisticsMonitoringItemBase>(x.Name, x));
 
-            foreach (var item in statItems)
-                services.AddSingleton(item);
+            //foreach (var item in statItems)
+            //    services.AddSingleton(item);
 
-            var items = new ConcurrentDictionary<string, StatisticsMonitoringItemBase>(
-                statItems.Select(x => new KeyValuePair<string, StatisticsMonitoringItemBase>(x.Name, x)));
-
-            services.AddSingleton(items);
+            var items = new ConcurrentDictionary<string, StatisticsMonitoringItemBase>(statItems);
+            services.AddSingleton<StatisticsItemsFullSet>();
+            services.AddSingleton<IDictionary<string, StatisticsMonitoringItemBase>>(items);
             var set = new StatisticsItemsFullSet(items, groups);
             services.AddSingleton(set);
 

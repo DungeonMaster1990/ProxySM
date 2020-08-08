@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Monitoring.Models
 {
-    public class StatisticsMonitoringGroup<T> : IStatisticsMonitoringGroup<T> where T : IMonitoringItem
+    public class StatisticsMonitoringGroup<T> : IStatisticsMonitoringGroup<T> where T : StatisticsMonitoringItemBase
     {
         public IDictionary<string, T> MonitoringItems { get; internal set; }
         private bool _addedNewGroups = false;
@@ -15,9 +15,9 @@ namespace Monitoring.Models
             MonitoringItems = new ConcurrentDictionary<string, T>();
         }
 
-        public void Add(T monitoringItem)
+        public void AddItem(T item)
         {
-            MonitoringItems.Add(monitoringItem.Name, monitoringItem);
+            MonitoringItems.Add(item.Name, item);
             _addedNewGroups = true;
         }
 
