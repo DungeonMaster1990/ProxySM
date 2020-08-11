@@ -30,10 +30,9 @@ namespace Monitoring
                     (StatisticsMonitoringItemBase) Activator.CreateInstance(x.PropertyType))
                 .Select(x => new KeyValuePair<string, StatisticsMonitoringItemBase>(x.Name, x));
 
-            //foreach (var item in statItems)
-            //    services.AddSingleton(item);
-
             var items = new ConcurrentDictionary<string, StatisticsMonitoringItemBase>(statItems);
+            foreach (var item in items)
+                services.AddSingleton(item.Value);
             services.AddSingleton<StatisticsItemsFullSet>();
             services.AddSingleton<IDictionary<string, StatisticsMonitoringItemBase>>(items);
             var set = new StatisticsItemsFullSet(items, groups);
