@@ -16,8 +16,10 @@ namespace Monitoring.Models
         public string GetJson()
         {
             var monitoringJO = JObject.FromObject(Item);
-            var commonSet = JObject.FromObject(_commonSet);
-            monitoringJO.AddAfterSelf(commonSet);
+            foreach (var property  in _commonSet.JObject)
+            {
+                monitoringJO.Add(property.Key, property.Value);
+            }
 
             return monitoringJO.ToString();
         }
