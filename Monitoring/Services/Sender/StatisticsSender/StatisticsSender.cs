@@ -14,7 +14,7 @@ namespace Monitoring.Services
         private readonly MonitoringOptions _monitoringOptions;
         private readonly IEnumerable<IDestination> _destinations;
 
-        private readonly CancellationToken _token;
+        public CancellationToken _token { get; set; }
         private Timer _timer = null;
         private StatisticsItemsFullSet _fullSet;
         private ManualResetEvent _timerDisposed;
@@ -22,13 +22,14 @@ namespace Monitoring.Services
         public StatisticsSender(
             IOptions<MonitoringOptions> monitoringOptions,
             IEnumerable<IDestination> destinations,
-            StatisticsItemsFullSet statisticItems,
-            CancellationToken token)
+            StatisticsItemsFullSet statisticItems)
         {
+            var tokenSource = new CancellationTokenSource();
+            _token = tokenSource.Token;
+
             _destinations = destinations;
             _monitoringOptions = monitoringOptions.Value;
             _fullSet = statisticItems;
-            _token = token;
 
             if (_monitoringOptions.RunImmediately)
                 StartMonitoring();
