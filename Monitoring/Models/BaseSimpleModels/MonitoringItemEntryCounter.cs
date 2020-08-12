@@ -8,6 +8,6 @@ namespace Monitoring.Models
         public ReinitableThreadSafeCounter Entries { get; set; } = new ReinitableThreadSafeCounter();
         public ReinitableThreadSafeCounter Exits { get; set; } = new ReinitableThreadSafeCounter();
         public ReinitableThreadSafeCounter Errors { get; set; } = new ReinitableThreadSafeCounter();
-        public Stopwatch Watcher { get; set; } = new Stopwatch();
+        public ReinitableThreadSafeAverageTime AverageExecutionTime { get; set; } = new ReinitableThreadSafeAverageTime();
     }
 }

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using Monitoring.Models;
 using Monitoring.Models.MonitoringItems;
 
 namespace Monitoring.Core

@@ -44,8 +44,8 @@ namespace Monitoring
 
             services.AddSingleton<IEnumerable<IDestination>>(destinations);
 
-            var groups = new ConcurrentDictionary<string, StatisticsMonitoringGroup<StatisticsMonitoringItemBase>>();
-            services.AddSingleton<IDictionary<string, StatisticsMonitoringGroup<StatisticsMonitoringItemBase>>>(groups);
+            var groups = new ConcurrentDictionary<string, StatisticsMonitoringGroup<IStatisticsMonitoringItem>>();
+            services.AddSingleton<IDictionary<string, StatisticsMonitoringGroup<IStatisticsMonitoringItem>>>(groups);
 
             var statItems = typeof(Monitoring).GetProperties()
                 .Where(p => typeof(StatisticsMonitoringItemBase).IsAssignableFrom(p.PropertyType))

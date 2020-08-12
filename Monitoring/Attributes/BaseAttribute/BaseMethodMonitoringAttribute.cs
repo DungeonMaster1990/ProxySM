@@ -11,6 +11,7 @@ namespace Monitoring.Attributes.BaseAttribute
     {
         protected readonly StatisticsItemsFullSet _set;
         protected MethodBase _method;
+        protected StatisticsMonitoringGroup<IStatisticsMonitoringItem> _group;
         /// <summary>
         /// тип мониторингового объекта
         /// </summary>
@@ -27,8 +28,8 @@ namespace Monitoring.Attributes.BaseAttribute
             var method = _set.GetType().GetMethods().First(x => x.Name == nameof(_set.GetOrCreateMonitoringGroup));
             var genericMethod = method.MakeGenericMethod(_itemType);
             var groupWrapped = genericMethod.Invoke(_set, new[] {this.GetType().Name});
-            
-            //_set
+            _group = (StatisticsMonitoringGroup<IStatisticsMonitoringItem>)groupWrapped;
+
             AfterEntry(args);
         }
 
@@ -38,8 +39,6 @@ namespace Monitoring.Attributes.BaseAttribute
 
         public abstract override void OnExit(MethodExecutionArgs args);
 
-        public abstract StatisticsMonitoringGroup<T> CreateGroup<T>()
-            where T : StatisticsMonitoringItemBase;
         //{
         //    if (!_itemType.IsAssignableFrom(typeof(StatisticsMonitoringItemBase)))
         //        throw new Exception("Type of monitoringItem should be inherited from base");

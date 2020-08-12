@@ -2,6 +2,8 @@
 using Monitoring.Attributes.BaseAttribute;
 using Monitoring.Models;
 using System;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Monitoring.Attributes
 {
@@ -9,33 +11,29 @@ namespace Monitoring.Attributes
     public class MethodMonitoringAttribute : BaseMethodMonitoringAttribute
     {
         MonitoringItemEntryCounter _monitoringItem;
-        public MethodMonitoringAttribute( StatisticsItemsFullSet statisticsItemsFullSet, Type itemType) 
-            : base(statisticsItemsFullSet, itemType)
+        Stopwatch _time;
+        public MethodMonitoringAttribute(StatisticsItemsFullSet statisticsItemsFullSet) 
+            : base(statisticsItemsFullSet, typeof(MonitoringItemEntryCounter))
         {
         }
 
         public override void AfterEntry(MethodExecutionArgs args)
         {
-            
+            _monitoringItem = (MonitoringItemEntryCounter)_group.GetOrAddItem(args.Method.Name);
             _monitoringItem.Entries++;
-            _monitoringItem.Watcher.Start();
+            _time.Start();
         }
 
         public override void OnExit(MethodExecutionArgs args)
         {
             _monitoringItem.Exits++;
-            _monitoringItem.Watcher.Stop();
-        }
-
-        public override StatisticsMonitoringGroup<T> CreateGroup<T>()
-        {
-            throw new NotImplementedException();
+            _time.Stop();
+            _monitoringItem.AverageExecutionTime.Add(_time.Elapsed);
         }
 
         public override void OnException(MethodExecutionArgs args)
         {
             _monitoringItem.Errors++;
-            _monitoringItem.Watcher.Stop();
         }
     }
 }

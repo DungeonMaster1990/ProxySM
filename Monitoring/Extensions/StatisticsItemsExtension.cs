@@ -10,7 +10,7 @@ namespace Monitoring.Extensions
             items.ForEach(x=>x.ReInit());
         }
 
-        public static void ForEach(this StatisticsItemsFullSet items, Action<StatisticsMonitoringItemBase> action)
+        public static void ForEach(this StatisticsItemsFullSet items, Action<IStatisticsMonitoringItem> action)
         {
             foreach (var group in items.Groups.Values)
             foreach (var item in group.MonitoringItems.Values)
