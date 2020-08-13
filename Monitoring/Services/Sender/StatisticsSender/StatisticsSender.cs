@@ -24,9 +24,6 @@ namespace Monitoring.Services
             IEnumerable<IDestination> destinations,
             StatisticsItemsFullSet statisticItems)
         {
-            var tokenSource = new CancellationTokenSource();
-            _token = tokenSource.Token;
-
             _destinations = destinations;
             _monitoringOptions = monitoringOptions.Value;
             _fullSet = statisticItems;
@@ -40,7 +37,7 @@ namespace Monitoring.Services
             if (_monitoringOptions.EnableMonitoring)
             {
                 var callback = new TimerCallback(SendStatistics);
-                var _timer = new Timer(callback, null, TimeSpan.Zero, _monitoringOptions.SendInterval);
+                _timer = new Timer(callback, null, TimeSpan.Zero, _monitoringOptions.SendInterval);
                 _timerDisposed = new ManualResetEvent(false);
             }
         }

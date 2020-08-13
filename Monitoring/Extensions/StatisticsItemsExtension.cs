@@ -8,12 +8,12 @@ namespace Monitoring.Extensions
     {
         public static void ReInit(this StatisticsItemsFullSet items)
         {
-            items.ForEach(x=>x.ReInit());
+            items.ForEach(x => x.ReInit());
         }
 
         public static void ForEach(this StatisticsItemsFullSet items, Action<IStatisticsMonitoringItem> action)
         {
-            foreach(var item in items.GroupItems.Values)
+            foreach (var item in items.GroupItems.Values)
                 action(item);
 
             foreach (var item in items.Items.Values)

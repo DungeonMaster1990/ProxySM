@@ -21,17 +21,19 @@ namespace Monitoring.Services
 
         public void SendStatistics(StatisticsItemsFullSet items)
         {
-            items.ForEach(x=>SendOneItem(_log, x));
+            if (_monitoringOptions.EnableMonitoring)
+                items.ForEach(x => SendOneItem(_log, x));
         }
 
         public void SendOneItem(ILogger log, IMonitoringItem monitoringItem)
         {
             var wrappedItem = new MonitoringItemWrapper<IMonitoringItem>(monitoringItem, _commonMonitoringSet);
             var loggerName = $"{_prefix}.{log.Name}";
+
             //loggers are cached in NLog core
             var jsonLog = LogManager.GetLogger(loggerName);
 
-            var theEvent = new LogEventInfo() {Level = LogLevel.Info};
+            var theEvent = new LogEventInfo() { Level = LogLevel.Info };
 
             theEvent.Properties["class"] = log.Name;
             theEvent.Properties["Detail"] = wrappedItem.GetJson();

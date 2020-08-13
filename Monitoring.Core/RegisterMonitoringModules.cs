@@ -25,21 +25,22 @@ namespace Monitoring
         public static IServiceCollection RegisterMonitoring<Monitoring>(this IServiceCollection services, IConfiguration configuration, IEnumerable<IDestination> newDestinations, string environmentName)
         where Monitoring : class
         {
-            var monitoringOptions = new MonitoringOptions();
             var section = configuration.GetSection("MonitoringOptions");
+            var monitoringOptions = new MonitoringOptions();
             section.Bind(monitoringOptions);
             var monitoringIOptions = Options.Create(monitoringOptions);
+            services.Configure<MonitoringOptions>(section);
 
             var commonSet = new CommonMonitoringSet(environmentName);
+
             services.AddSingleton(commonSet);
-            section.Bind(monitoringOptions);
-            services.Configure<MonitoringOptions>(section);
             services.AddSingleton<Monitoring>();
             services.AddSingleton<IMonitoringSender, MonitoringSender>();
 
             var destinations = new List<IDestination>(newDestinations);
             var jsonNLogDestination = new JsonNLogDestination(commonSet, monitoringIOptions);
             var logDestination = new LogDestination(monitoringIOptions);
+
             destinations.Add(jsonNLogDestination);
             destinations.Add(logDestination);
 
@@ -52,12 +53,6 @@ namespace Monitoring
                 .Where(p => typeof(IStatisticsMonitoringItem).IsAssignableFrom(p.PropertyType))
                 .Select(x =>
                     {
-                        //var genericTypeForFactory = x.PropertyType;
-                        //var baseFactoryType = typeof(StatisticsItemFactory<>);
-                        //var factoryGenericType = baseFactoryType.MakeGenericType(genericTypeForFactory);
-                        //var factory = Activator.CreateInstance(factoryGenericType);
-                        //var item = (IStatisticsMonitoringItem)factoryGenericType.GetMethod(nameof(StatisticsItemFactory<IStatisticsMonitoringItem>.CreateItem)).Invoke(factory, new object[] {null});
-                        //return item;
                         var item = (IStatisticsMonitoringItem)Activator.CreateInstance(x.PropertyType);
                         item.Name = x.PropertyType.Name;
                         item.SetProperties();
@@ -66,12 +61,15 @@ namespace Monitoring
                 )
                 .Select(x => new KeyValuePair<string, IStatisticsMonitoringItem>(x.Name, x));
 
-            var items = new ConcurrentDictionary<string, IStatisticsMonitoringItem>(statItems);
-            foreach (var item in items)
+            var itemsDictionary = new ConcurrentDictionary<string, IStatisticsMonitoringItem>(statItems);
+
+            foreach (var item in itemsDictionary)
                 services.AddSingleton(item.Value.GetType(), item.Value);
-            services.AddSingleton<StatisticsItemsFullSet>();
-            services.AddSingleton<IDictionary<string, IStatisticsMonitoringItem>>(items);
-            var set = new StatisticsItemsFullSet(items, groups);
+
+            services.AddSingleton<IDictionary<string, IStatisticsMonitoringItem>>(itemsDictionary);
+
+            var set = new StatisticsItemsFullSet(itemsDictionary, groups);
+
             services.AddSingleton(set);
 
             var statisticsSender = new StatisticsSender(monitoringIOptions, destinations, set);

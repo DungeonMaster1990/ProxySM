@@ -25,7 +25,7 @@ namespace Monitoring.Services
             _monitoringOptions = options.Value;
         }
 
-        private (int maxLengthGroupName, IDictionary<string, List<int>> dynamicGroupsIntends) CalculateIntendesDynamicGroups(StatisticsItemsFullSet items)
+        private (int maxLengthGroupName, IDictionary<string, List<int>> dynamicGroupsIntends) CalculateIntendesForGroups(StatisticsItemsFullSet items)
         {
             var intends = items.GroupItems
                 .ToDictionary(x => x.Key,
@@ -34,7 +34,6 @@ namespace Monitoring.Services
             var maxGroupNameLength = items.GroupItems.Count == 0 ? 0 : items.GroupItems.Max(x => x.Key.GroupName.Length);
 
             return (maxGroupNameLength, new Dictionary<string, List<int>>());
-            throw new NotImplementedException();
         }
 
         private (int maxLengthItemName, IDictionary<string, List<int>> monitoringItemsPropertiesIntends) CalculateBasicIntendes(StatisticsItemsFullSet items)
@@ -47,7 +46,7 @@ namespace Monitoring.Services
 
         private void CalculateIntends(StatisticsItemsFullSet items)
         {
-            var (maxLengthGroupName, dynamicGroupsIntends) = CalculateIntendesDynamicGroups(items);
+            var (maxLengthGroupName, dynamicGroupsIntends) = CalculateIntendesForGroups(items);
             var (maxLengthItemName, monitoringItemsPropertiesIntends) = CalculateBasicIntendes(items);
             _baseNameIntend = Math.Max(maxLengthGroupName, maxLengthItemName);
             _dynamicGroupPropertiesIntends = dynamicGroupsIntends;
