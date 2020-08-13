@@ -1,7 +1,7 @@
 ﻿namespace Monitoring.ConcurrentCounters
 {
     /// <summary>
-    /// Не сбрасывается при реинициализации
+    /// Несбрасываемый при реинициализации счетчик (переполняется на long, не учтено)
     /// </summary>
     public class ReinitableThreadSafeTotalCounter: ReinitableThreadSafeCounter
     {

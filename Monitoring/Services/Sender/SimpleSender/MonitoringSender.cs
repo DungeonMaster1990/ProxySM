@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System.Collections.Generic;
+using Microsoft.Extensions.Options;
+using NLog;
 using Monitoring.Configurations;
 using Monitoring.Models;
-using System.Collections.Generic;
-using NLog;
 
 namespace Monitoring.Services
 {
