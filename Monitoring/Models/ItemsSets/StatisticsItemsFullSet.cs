@@ -7,11 +7,11 @@ namespace Monitoring.Models
 {
     public class StatisticsItemsFullSet
     {
-        public readonly IDictionary<string, StatisticsMonitoringItemBase> Items;
+        public readonly IDictionary<string, IStatisticsMonitoringItem> Items;
         public readonly IDictionary<string, StatisticsMonitoringGroup<IStatisticsMonitoringItem>> Groups;
         private readonly HashSet<(string Name, Type MonitoringItemType)> _groupNameAndGroupMonitoringItemsTypeSet;
         private readonly ConcurrentDictionary<string, StatisticsItemFactory<IStatisticsMonitoringItem>> _itemFactories;
-        public StatisticsItemsFullSet(IDictionary<string, StatisticsMonitoringItemBase> items,
+        public StatisticsItemsFullSet(IDictionary<string, IStatisticsMonitoringItem> items,
             IDictionary<string, StatisticsMonitoringGroup<IStatisticsMonitoringItem>> groups)
         {
             Items = items;

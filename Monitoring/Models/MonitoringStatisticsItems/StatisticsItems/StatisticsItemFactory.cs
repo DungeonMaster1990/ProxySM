@@ -12,9 +12,9 @@ namespace Monitoring.Models
 
             item.Properties = typeof(T).GetProperties()
                 .Where(p => typeof(IReinitableThreadSafeOperation).IsAssignableFrom(p.PropertyType))
-                .ToDictionary(x => x.Name, x => (IReinitableThreadSafeOperation)x.GetValue(this));
+                .ToDictionary(x => x.Name, x => (IReinitableThreadSafeOperation)x.GetValue(item));
 
-            item.Name = name != null ? name : this.GetType().Name;
+            item.Name = name ?? item.GetType().Name;
             return item;
         }
     }

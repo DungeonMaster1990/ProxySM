@@ -31,7 +31,7 @@ namespace Monitoring.Services
                 .ToDictionary(x => x.Key, 
                     x => x.Value.MonitoringItems.First().Value.Properties.Keys.Select(y=>y.Length).ToList());
 
-            var maxGroupNameLength = items.Groups.Max(x => x.Key.Length);
+            var maxGroupNameLength = items.Groups.Count == 0 ? 0: items.Groups.Max(x => x.Key.Length);
 
             return (maxGroupNameLength, intends);
         }

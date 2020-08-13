@@ -20,4 +20,10 @@
     <ProjectReference Include="..\Monitoring\Monitoring.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="FodyWeavers.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

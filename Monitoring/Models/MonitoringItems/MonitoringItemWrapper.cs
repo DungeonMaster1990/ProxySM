@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Monitoring.Models
 {
@@ -21,7 +22,7 @@ namespace Monitoring.Models
                 monitoringJO.Add(property.Key, property.Value);
             }
 
-            return monitoringJO.ToString();
+            return monitoringJO.ToString(Formatting.None);
         }
     }
 }

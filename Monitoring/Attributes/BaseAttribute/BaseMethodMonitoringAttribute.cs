@@ -38,24 +38,5 @@ namespace Monitoring.Attributes.BaseAttribute
         public abstract override void OnException(MethodExecutionArgs args);
 
         public abstract override void OnExit(MethodExecutionArgs args);
-
-        //{
-        //    if (!_itemType.IsAssignableFrom(typeof(StatisticsMonitoringItemBase)))
-        //        throw new Exception("Type of monitoringItem should be inherited from base");
-
-        //    Type dictType = typeof(ConcurrentDictionary<,>);
-            
-        //    Type[] genericTypesOfDictType = { typeof(string), _itemType };
-
-        //    Type concurrentDictType = dictType.MakeGenericType(genericTypesOfDictType);
-        //    var x = (ConcurrentDictionary<StatisticsMonitoringGroup, >)Activator.CreateInstance(concurrentDictType, new object[] { this.GetType().Name });
-
-        //    return (StatisticsMonitoringGroup<StatisticsMonitoringItemBase>)
-        //}
-
-        private StatisticsMonitoringItemBase CreateMonitoringItem()
-        {
-            return (StatisticsMonitoringItemBase)Activator.CreateInstance(_itemType);
-        }
     }
 }

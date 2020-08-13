@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Monitoring.Attributes;
 using Monitoring.Configurations;
 using Monitoring.Models;
 using Monitoring.Services;
@@ -48,21 +49,31 @@ namespace Monitoring
             services.AddSingleton<IDictionary<string, StatisticsMonitoringGroup<IStatisticsMonitoringItem>>>(groups);
 
             var statItems = typeof(Monitoring).GetProperties()
-                .Where(p => typeof(StatisticsMonitoringItemBase).IsAssignableFrom(p.PropertyType))
+                .Where(p => typeof(IStatisticsMonitoringItem).IsAssignableFrom(p.PropertyType))
                 .Select(x =>
-                    (StatisticsMonitoringItemBase) Activator.CreateInstance(x.PropertyType))
-                .Select(x => new KeyValuePair<string, StatisticsMonitoringItemBase>(x.Name, x));
+                    {
+                        var genericTypeForFactory = x.PropertyType;
+                        var baseFactoryType = typeof(StatisticsItemFactory<>);
+                        var factoryGenericType = baseFactoryType.MakeGenericType(genericTypeForFactory);
+                        var factory = Activator.CreateInstance(factoryGenericType);
+                        var item = (IStatisticsMonitoringItem)factoryGenericType.GetMethod(nameof(StatisticsItemFactory<IStatisticsMonitoringItem>.CreateItem)).Invoke(factory, new object[] {null});
+                        return item;
+                    }
+                )
+                .Select(x => new KeyValuePair<string, IStatisticsMonitoringItem>(x.Name, x));
 
-            var items = new ConcurrentDictionary<string, StatisticsMonitoringItemBase>(statItems);
+            var items = new ConcurrentDictionary<string, IStatisticsMonitoringItem>(statItems);
             foreach (var item in items)
                 services.AddSingleton(item.Value.GetType(), item.Value);
             services.AddSingleton<StatisticsItemsFullSet>();
-            services.AddSingleton<IDictionary<string, StatisticsMonitoringItemBase>>(items);
+            services.AddSingleton<IDictionary<string, IStatisticsMonitoringItem>>(items);
             var set = new StatisticsItemsFullSet(items, groups);
             services.AddSingleton(set);
 
             var statisticsSender = new StatisticsSender(monitoringIOptions, destinations, set);
             services.AddSingleton<IStatisticsSender>(statisticsSender);
+
+            services.AddScoped<MethodMonitoringAttribute>();
             return services;
         }
     }
