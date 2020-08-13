@@ -3,24 +3,23 @@ using Monitoring.Attributes.BaseAttribute;
 using Monitoring.Models;
 using System;
 using System.Diagnostics;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Monitoring.Attributes
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class MethodMonitoringAttribute : BaseMethodMonitoringAttribute, IFilterMetadata
+    public class MethodMonitoringAttribute : BaseMethodMonitoringAttribute
     {
-        MonitoringItemEntryCounter _monitoringItem;
-        Stopwatch _time;
-        public MethodMonitoringAttribute(StatisticsItemsFullSet statisticsItemsFullSet) 
-            : base(statisticsItemsFullSet, typeof(MonitoringItemEntryCounter))
+        private MonitoringItemEntryCounter _monitoringItem;
+        private Stopwatch _time;        
+        public MethodMonitoringAttribute() 
+            : base(typeof(MonitoringItemEntryCounter))
         {
+            _time = new Stopwatch();
         }
 
         public override void AfterEntry(MethodExecutionArgs args)
         {
-            _monitoringItem = (MonitoringItemEntryCounter)_group.GetOrAddItem(args.Method.Name);
+            _monitoringItem = _set.GetOrCreateGroupItem<MonitoringItemEntryCounter>(args.Method.Name, nameof(MethodMonitoringAttribute).Replace("Attribute", ""));
             _monitoringItem.Entries++;
             _time.Start();
         }

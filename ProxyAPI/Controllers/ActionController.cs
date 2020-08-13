@@ -1,9 +1,8 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
-using Monitoring.Models;
-using Monitoring.Services;
-using Monitoring.Services.Sender;
 using NLog;
+using Monitoring.Attributes;
+using Monitoring.Models;
 using ProxyAPI.Monitoring;
 
 namespace ProxyAPI.Controllers
@@ -15,15 +14,15 @@ namespace ProxyAPI.Controllers
         private ILogger _log = LogManager.GetCurrentClassLogger();
         private readonly ProxyAPIMonitoring _monitoring;
         private readonly Random _rnd;
-        private readonly IStatisticsSender _statSender;
         public StatisticsItemsFullSet StatisticsItemsFullSet { get; }
-        public ActionController(ProxyAPIMonitoring monitoring, StatisticsSender statSender)
+        public ActionController(ProxyAPIMonitoring monitoring, StatisticsItemsFullSet statisticsItemsFullSet)
         {
             _rnd = new Random();
             _monitoring = monitoring;
+            StatisticsItemsFullSet = statisticsItemsFullSet;
         }
 
-        [ServiceFilter(typeof(MethodMonitoringAttribute))]
+        [MethodMonitoring]
         [HttpGet]
         public IActionResult SendDataToSMByGet()
         {

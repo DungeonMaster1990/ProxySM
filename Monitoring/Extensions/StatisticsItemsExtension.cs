@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using Monitoring.Models;
 
 namespace Monitoring.Extensions
@@ -12,8 +13,7 @@ namespace Monitoring.Extensions
 
         public static void ForEach(this StatisticsItemsFullSet items, Action<IStatisticsMonitoringItem> action)
         {
-            foreach (var group in items.Groups.Values)
-            foreach (var item in group.MonitoringItems.Values)
+            foreach(var item in items.GroupItems.Values)
                 action(item);
 
             foreach (var item in items.Items.Values)

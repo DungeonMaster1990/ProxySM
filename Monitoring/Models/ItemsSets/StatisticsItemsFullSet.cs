@@ -1,42 +1,31 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
+﻿using System.Collections.Generic;
 
 namespace Monitoring.Models
 {
     public class StatisticsItemsFullSet
     {
         public readonly IDictionary<string, IStatisticsMonitoringItem> Items;
-        public readonly IDictionary<string, StatisticsMonitoringGroup<IStatisticsMonitoringItem>> Groups;
-        private readonly HashSet<(string Name, Type MonitoringItemType)> _groupNameAndGroupMonitoringItemsTypeSet;
-        private readonly ConcurrentDictionary<string, StatisticsItemFactory<IStatisticsMonitoringItem>> _itemFactories;
+        public readonly IDictionary<(string GroupName, string ItemName), IStatisticsMonitoringItem> GroupItems;
         public StatisticsItemsFullSet(IDictionary<string, IStatisticsMonitoringItem> items,
-            IDictionary<string, StatisticsMonitoringGroup<IStatisticsMonitoringItem>> groups)
+            IDictionary<(string GroupName, string ItemName), IStatisticsMonitoringItem> groupItems)
         {
             Items = items;
-            Groups = groups;
-            _groupNameAndGroupMonitoringItemsTypeSet = new HashSet<(string Name, Type MonitoringItemType)>();
-            _itemFactories = new ConcurrentDictionary<string, StatisticsItemFactory<IStatisticsMonitoringItem>>();
+            GroupItems = groupItems;
         }
 
-        public StatisticsMonitoringGroup<IStatisticsMonitoringItem> GetOrCreateMonitoringGroup<MonitoringItem>(string groupName)
-            where MonitoringItem : IStatisticsMonitoringItem
+        public MonitoringItem GetOrCreateGroupItem<MonitoringItem>(string itemName, string groupName)
+            where MonitoringItem: IStatisticsMonitoringItem, new()
         {
-            if (Groups.ContainsKey(groupName) && _groupNameAndGroupMonitoringItemsTypeSet.Contains((groupName, typeof(MonitoringItem))))
+            if (GroupItems.ContainsKey((groupName, itemName)))
             {
-                return Groups[groupName];
+                return (MonitoringItem)GroupItems[(groupName, itemName)];
             }
             else
             {
-                if (_groupNameAndGroupMonitoringItemsTypeSet.Any(x=>x.Name == groupName))
-                    throw new Exception("GroupName with such name already exist but use other monitoringItem");
-                _groupNameAndGroupMonitoringItemsTypeSet.Add((groupName, typeof(MonitoringItem)));
-                var factory = _itemFactories.GetOrAdd(groupName, new StatisticsItemFactory<IStatisticsMonitoringItem>());
-
-                var group = new StatisticsMonitoringGroup<IStatisticsMonitoringItem>(groupName, factory);
-                Groups.Add(groupName, group);
-                return group;
+                var item = new MonitoringItem() { Name = itemName, GroupName = groupName };
+                item.SetProperties();
+                GroupItems.Add((groupName, itemName), item);
+                return item;
             }
         }
     }

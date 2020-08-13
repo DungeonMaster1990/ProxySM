@@ -45,18 +45,22 @@ namespace Monitoring
 
             services.AddSingleton<IEnumerable<IDestination>>(destinations);
 
-            var groups = new ConcurrentDictionary<string, StatisticsMonitoringGroup<IStatisticsMonitoringItem>>();
-            services.AddSingleton<IDictionary<string, StatisticsMonitoringGroup<IStatisticsMonitoringItem>>>(groups);
+            var groups = new ConcurrentDictionary<(string, string), IStatisticsMonitoringItem>();
+            services.AddSingleton<IDictionary<(string, string), IStatisticsMonitoringItem>>(groups);
 
             var statItems = typeof(Monitoring).GetProperties()
                 .Where(p => typeof(IStatisticsMonitoringItem).IsAssignableFrom(p.PropertyType))
                 .Select(x =>
                     {
-                        var genericTypeForFactory = x.PropertyType;
-                        var baseFactoryType = typeof(StatisticsItemFactory<>);
-                        var factoryGenericType = baseFactoryType.MakeGenericType(genericTypeForFactory);
-                        var factory = Activator.CreateInstance(factoryGenericType);
-                        var item = (IStatisticsMonitoringItem)factoryGenericType.GetMethod(nameof(StatisticsItemFactory<IStatisticsMonitoringItem>.CreateItem)).Invoke(factory, new object[] {null});
+                        //var genericTypeForFactory = x.PropertyType;
+                        //var baseFactoryType = typeof(StatisticsItemFactory<>);
+                        //var factoryGenericType = baseFactoryType.MakeGenericType(genericTypeForFactory);
+                        //var factory = Activator.CreateInstance(factoryGenericType);
+                        //var item = (IStatisticsMonitoringItem)factoryGenericType.GetMethod(nameof(StatisticsItemFactory<IStatisticsMonitoringItem>.CreateItem)).Invoke(factory, new object[] {null});
+                        //return item;
+                        var item = (IStatisticsMonitoringItem)Activator.CreateInstance(x.PropertyType);
+                        item.Name = x.PropertyType.Name;
+                        item.SetProperties();
                         return item;
                     }
                 )
@@ -73,7 +77,6 @@ namespace Monitoring
             var statisticsSender = new StatisticsSender(monitoringIOptions, destinations, set);
             services.AddSingleton<IStatisticsSender>(statisticsSender);
 
-            services.AddScoped<MethodMonitoringAttribute>();
             return services;
         }
     }

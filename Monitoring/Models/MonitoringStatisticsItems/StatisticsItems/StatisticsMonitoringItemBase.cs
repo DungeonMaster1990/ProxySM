@@ -9,21 +9,10 @@ namespace Monitoring.Models
     public abstract class StatisticsMonitoringItemBase : IStatisticsMonitoringItem
     {
         public string Name { get; set; }
+        public string GroupName { get; set; }
 
         [JsonIgnore]
-        public IDictionary<string, IReinitableThreadSafeOperation> Properties { get; set; }
-
-        //public StatisticsMonitoringItemBase(string name = null)
-        //{
-        //    Properties = GetType().GetProperties()
-        //        .Where(p => typeof(IReinitableThreadSafeOperation).IsAssignableFrom(p.PropertyType))
-        //        .ToDictionary(x => x.Name, x => (IReinitableThreadSafeOperation)x.GetValue(this));
-            
-        //    if (name != null)
-        //        Name = name;
-        //    else
-        //        Name = this.GetType().Name;
-        //}
+        public IDictionary<string, IReinitableThreadSafeOperation> Properties { get; private set; }
 
         public void ReInit()
         {
@@ -34,6 +23,13 @@ namespace Monitoring.Models
         public JObject GetJObject()
         {
             return JObject.FromObject(this);
+        }
+
+        public void SetProperties()
+        {
+            Properties = GetType().GetProperties()
+                   .Where(p => typeof(IReinitableThreadSafeOperation).IsAssignableFrom(p.PropertyType))
+                   .ToDictionary(x => x.Name, x => (IReinitableThreadSafeOperation)x.GetValue(this));
         }
     }
 }

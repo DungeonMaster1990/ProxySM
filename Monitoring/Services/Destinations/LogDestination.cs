@@ -27,13 +27,14 @@ namespace Monitoring.Services
 
         private (int maxLengthGroupName, IDictionary<string, List<int>> dynamicGroupsIntends) CalculateIntendesDynamicGroups(StatisticsItemsFullSet items)
         {
-            var intends = items.Groups
-                .ToDictionary(x => x.Key, 
-                    x => x.Value.MonitoringItems.First().Value.Properties.Keys.Select(y=>y.Length).ToList());
+            var intends = items.GroupItems
+                .ToDictionary(x => x.Key,
+                    x => x.Value.Properties.Keys.Select(y => y.Length).ToList());
 
-            var maxGroupNameLength = items.Groups.Count == 0 ? 0: items.Groups.Max(x => x.Key.Length);
+            var maxGroupNameLength = items.GroupItems.Count == 0 ? 0 : items.GroupItems.Max(x => x.Key.GroupName.Length);
 
-            return (maxGroupNameLength, intends);
+            return (maxGroupNameLength, new Dictionary<string, List<int>>());
+            throw new NotImplementedException();
         }
 
         private (int maxLengthItemName, IDictionary<string, List<int>> monitoringItemsPropertiesIntends) CalculateBasicIntendes(StatisticsItemsFullSet items)
