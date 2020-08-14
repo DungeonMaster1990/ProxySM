@@ -1,6 +1,7 @@
 ﻿using MethodBoundaryAspect.Fody.Attributes;
 using Monitoring.Attributes.BaseAttribute;
 using Monitoring.Models;
+using Monitoring.Services;
 using System;
 using System.Diagnostics;
 
@@ -15,7 +16,7 @@ namespace Monitoring.Attributes
         /// <summary>
         /// Мониторинговый item - счетчик
         /// </summary>
-        private MonitoringItemEntryCounter _monitoringItem;
+        private MonitoringItemEntryCounter _monitoringItem;        
         
         /// <summary>
         /// Таймер времени выполнения метода

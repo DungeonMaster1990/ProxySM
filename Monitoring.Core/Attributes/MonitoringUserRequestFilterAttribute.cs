@@ -3,6 +3,8 @@ using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Monitoring.Models;
+using Monitoring.Services;
+using NLog;
 
 namespace Monitoring.Attributes
 {
@@ -13,6 +15,8 @@ namespace Monitoring.Attributes
     public abstract class MonitoringUserRequestFilterAttribute : Attribute, IActionFilter
     {
         private readonly RequestUserMonitoringItem _item;
+        private static readonly ILogger _log = LogManager.GetCurrentClassLogger();
+        private readonly IMonitoringSender _monitoringSender;
         public MonitoringUserRequestFilterAttribute(RequestUserMonitoringItem item)
         {
             _item = item;
@@ -34,6 +38,7 @@ namespace Monitoring.Attributes
         {
             _item.Finish = DateTime.Now;
             _item.ResponseOutput = null;
+            _monitoringSender.Send(_log, _item);
         }
 
         public abstract object GetUser(ActionExecutingContext context);

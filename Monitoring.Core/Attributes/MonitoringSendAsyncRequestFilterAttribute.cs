@@ -3,6 +3,9 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Monitoring.Models;
+using Monitoring.Services;
+using NLog;
 
 namespace Monitoring.Attributes
 {
@@ -13,9 +16,12 @@ namespace Monitoring.Attributes
     public class MonitoringSendAsyncRequestFilterAttribute: Attribute, IAsyncActionFilter
     {
         private readonly RequestMonitoringItem _item;
-        public MonitoringSendAsyncRequestFilterAttribute(RequestMonitoringItem item)
+        private static readonly ILogger _log = LogManager.GetCurrentClassLogger();
+        private readonly IMonitoringSender _monitoringSender;
+        public MonitoringSendAsyncRequestFilterAttribute(RequestMonitoringItem item, IMonitoringSender monitoringSender)
         {
             _item = item;
+            _monitoringSender = monitoringSender;
         }
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -31,6 +37,7 @@ namespace Monitoring.Attributes
             await next();
             _item.Finish = DateTime.Now;
             _item.ResponseOutput = null;
+            _monitoringSender.Send(_log, _item);
         }
     }
 }
