@@ -21,7 +21,6 @@ namespace Monitoring.Attributes
         {
             _item.Start = DateTime.Now;
             _item.Action = context.ActionDescriptor.DisplayName;
-
             _item.RequestParameters = context.ActionArguments.ToDictionary(x => x.Key, x => x.Value.GetType().IsSerializable ? x.Value : null);
             _item.HttpMethod = context.HttpContext.Request.Method;
             _item.UserHostAddress = context.HttpContext.Request.Host.Host;
