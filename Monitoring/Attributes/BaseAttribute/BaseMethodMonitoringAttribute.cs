@@ -5,6 +5,9 @@ using MethodBoundaryAspect.Fody.Attributes;
 
 namespace Monitoring.Attributes.BaseAttribute
 {
+    /// <summary>
+    /// Базовый абстрактный атрибут мониторинга методов
+    /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     public abstract class BaseMethodMonitoringAttribute : OnMethodBoundaryAspect
     {

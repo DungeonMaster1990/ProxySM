@@ -6,6 +6,9 @@ using Monitoring.ConcurrentCounters;
 
 namespace Monitoring.Models
 {
+    /// <summary>
+    /// Базовый статистический мониториговый item. Используется для создания простых объектов
+    /// </summary>
     public abstract class StatisticsMonitoringItemBase : IStatisticsMonitoringItem
     {
         public string Name { get; set; }

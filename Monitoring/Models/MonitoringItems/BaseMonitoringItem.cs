@@ -5,8 +5,14 @@ using System.Linq;
 
 namespace Monitoring.Models.MonitoringItems
 {
+    /// <summary>
+    /// Базовый класс обычных мониторинговых объектов(отправляются вручную через IMonitoringSender)
+    /// </summary>
     public abstract class BaseMonitoringItem : IMonitoringItem
     {
+        /// <summary>
+        /// Имя item
+        /// </summary>
         public string Name { get; set; }
 
         public IDictionary<string, IReinitableThreadSafeOperation> Properties { get; private set; }

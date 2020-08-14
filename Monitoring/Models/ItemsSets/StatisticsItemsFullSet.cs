@@ -2,6 +2,9 @@
 
 namespace Monitoring.Models
 {
+    /// <summary>
+    /// fullset мониторинговых item's и групп item's
+    /// </summary>
     public class StatisticsItemsFullSet
     {
         public readonly IDictionary<string, IStatisticsMonitoringItem> Items;
@@ -13,6 +16,13 @@ namespace Monitoring.Models
             GroupItems = groupItems;
         }
 
+        /// <summary>
+        /// Обобщенный типом item'а метод получения или создания группы по имени item'а и группы
+        /// </summary>
+        /// <typeparam name="MonitoringItem"></typeparam>
+        /// <param name="itemName">имя item</param>
+        /// <param name="groupName">имя группы</param>
+        /// <returns>item</returns>
         public MonitoringItem GetOrCreateGroupItem<MonitoringItem>(string itemName, string groupName)
             where MonitoringItem: IStatisticsMonitoringItem, new()
         {

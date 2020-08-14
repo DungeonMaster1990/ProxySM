@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Monitoring.Configurations;
+using Newtonsoft.Json;
 
 namespace Monitoring.Services
 {
@@ -128,7 +129,7 @@ namespace Monitoring.Services
 
         public void SendOneItem(ILogger log, IMonitoringItem monitoringItem)
         {
-            log.Info(monitoringItem.GetJObject().ToString(_monitoringOptions.JsonFormatingInSimpleLog));
+            log.Info(monitoringItem.GetJObject().ToString(Formatting.None));
         }
     }
 }

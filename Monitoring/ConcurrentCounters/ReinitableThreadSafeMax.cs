@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Monitoring.Extensions;
+﻿using System.Threading;
 
 namespace Monitoring.ConcurrentCounters
 {
+    /// <summary>
+    /// Потокобезопасное получение максимального значения
+    /// </summary>
     public class ReinitableThreadSafeMax: IThreadSafeOperation<long>
     {
         private long _value = 0;
@@ -14,9 +14,14 @@ namespace Monitoring.ConcurrentCounters
             _value = 0;
         }
 
-        public void Add(long item)
+        /// <summary>
+        /// Сравнение значений и выборм максимального
+        /// </summary>
+        /// <param name="value"></param>
+        public void Add(long value)
         {
-            _value.GetMax(item);
+            if (_value < value)
+                Interlocked.Exchange(ref _value, value);
         }
 
         public long Value { get; }
