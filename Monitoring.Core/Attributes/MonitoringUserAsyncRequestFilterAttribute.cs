@@ -18,9 +18,10 @@ namespace Monitoring.Attributes
         private readonly RequestUserMonitoringItem _item;
         private static readonly ILogger _log = LogManager.GetCurrentClassLogger();
         private readonly IMonitoringSender _monitoringSender;
-        public MonitoringUserAsyncRequestFilterAttribute(RequestUserMonitoringItem item)
+        public MonitoringUserAsyncRequestFilterAttribute(RequestUserMonitoringItem item, IMonitoringSender monitoringSender)
         {
             _item = item;
+            _monitoringSender = monitoringSender;
         }
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
