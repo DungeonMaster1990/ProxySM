@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 namespace Monitoring.Models
 {
+    /// <summary>
+    /// Мониторинговй item
+    /// </summary>
     public interface IMonitoringItem
     {
         string Name { get; set; }

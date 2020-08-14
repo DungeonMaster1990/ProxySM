@@ -5,6 +5,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Monitoring.Models
 {
+    /// <summary>
+    /// Общий мониторинговый set
+    /// </summary>
     public class CommonMonitoringSet
     {
 

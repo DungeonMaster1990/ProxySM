@@ -1,11 +1,14 @@
-﻿using Monitoring.Models;
+﻿using Microsoft.Extensions.Options;
 using NLog;
+using Monitoring.Models;
 using Monitoring.Extensions;
-using Microsoft.Extensions.Options;
 using Monitoring.Configurations;
 
 namespace Monitoring.Services
 {
+    /// <summary>
+    /// JSON destiantion
+    /// </summary>
     public class JsonNLogDestination : IDestination
     {
         private ILogger _log = LogManager.GetLogger("Statistics");
@@ -19,12 +22,21 @@ namespace Monitoring.Services
             _commonMonitoringSet = commonMonitoringSet;
         }
 
+        /// <summary>
+        /// Отправка item's в лог
+        /// </summary>
+        /// <param name="items">item's</param>
         public void SendStatistics(StatisticsItemsFullSet items)
         {
             if (_monitoringOptions.EnableMonitoring)
                 items.ForEach(x => SendOneItem(_log, x));
         }
 
+        /// <summary>
+        /// Отправка item в лог
+        /// </summary>
+        /// <param name="log">логгер</param>
+        /// <param name="monitoringItem">item</param>
         public void SendOneItem(ILogger log, IMonitoringItem monitoringItem)
         {
             var wrappedItem = new MonitoringItemWrapper<IMonitoringItem>(monitoringItem, _commonMonitoringSet);
