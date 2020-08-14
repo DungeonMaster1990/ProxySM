@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
-    <ProjectReference Include="..\Monitoring.Core\Monitoring.Core.csproj" />
+    <ProjectReference Include="..\Monitoring.Extensions\Monitoring.Extensions.csproj" />
     <ProjectReference Include="..\Monitoring\Monitoring.csproj" />
   </ItemGroup>
 
