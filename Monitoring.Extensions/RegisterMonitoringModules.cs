@@ -41,10 +41,8 @@ namespace Monitoring
 
             var destinations = new List<IDestination>(newDestinations);
             var jsonNLogDestination = new JsonNLogDestination(commonSet, monitoringIOptions);
-            var logDestination = new LogDestination(monitoringIOptions);
 
             destinations.Add(jsonNLogDestination);
-            destinations.Add(logDestination);
 
             services.AddSingleton<IEnumerable<IDestination>>(destinations);
 
