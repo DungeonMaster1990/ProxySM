@@ -20,7 +20,7 @@ namespace Monitoring.Services
         private (List<int> DynamicGroupIntends, List<int> ItemsGroupIntends) _intends;
         private int _previousHashCode = 0;
         private MonitoringOptions _monitoringOptions;
-        private (int GroupNameIntend, int ItemsNameIntend) _baseIntends;
+        private (int GroupNameIntend, int ItemsNameIntend) _baseIntends = (0, 0);
         private int _itemsNameIntend;
 
         public LogDestination(IOptions<MonitoringOptions> options)
@@ -94,24 +94,17 @@ namespace Monitoring.Services
 
             sb.AppendLine(delimeterString);
             return null;
-
-            //for (int = 0; i < items.groups; i++)
-
-            //foreach (var group in groups)
-            //{
-
-            //    sb.Append($"{group.Key.Name, }")
-            //}
-            //foreach (var item in items)
-            //{
-            //    item.Properties
-            //}
         }
 
         private string PrintGroup(string groupName, IList<IStatisticsMonitoringItem> monitoringItems)
         {
             var sb = new StringBuilder();
             sb.Append(_delimeterVertical);
+            var groupIntend = _baseIntends.GroupNameIntend;
+            sb.Append($"{groupName}");
+            sb.Append(new string(' ', groupIntend - groupName.Length));
+            sb.Append(_delimeterVertical);
+
             return null;
         }
 
