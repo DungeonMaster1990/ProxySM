@@ -3,6 +3,7 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Microsoft.Extensions.Options;
 using Monitoring.Configurations;
 
@@ -14,50 +15,86 @@ namespace Monitoring.Services
 
         private const char _delimeterHoriontal = '-';
         private const char _delimeterVertical = '|';
-        private IDictionary<string, List<int>> _dynamicGroupPropertiesIntends;
-        private IDictionary<string, List<int>> _monitoringItemsPropertiesIntends;
-        private int _baseNameIntend;
+        private const int _addCharsInCell = 6;
+        private (List<int> DynamicGroupIntends, List<int> ItemsGroupIntends) _intends;
         private int _previousHashCode = 0;
         private MonitoringOptions _monitoringOptions;
+        private (int GroupNameIntend, int ItemsNameIntend) _baseIntends;
+        private int _itemsNameIntend;
 
         public LogDestination(IOptions<MonitoringOptions> options)
         {
             _monitoringOptions = options.Value;
         }
 
-        private (int maxLengthGroupName, IDictionary<string, List<int>> dynamicGroupsIntends) CalculateIntendesForGroups(StatisticsItemsFullSet items)
+        private (int maxLengthGroupName, List<int> dynamicGroupsIntends) CalculateIntendesForGroups(StatisticsItemsFullSet items)
         {
-            var intends = items.GroupItems
-                .ToDictionary(x => x.Key,
-                    x => x.Value.Properties.Keys.Select(y => y.Length).ToList());
+            var propertiesNames = items.GroupItems.Values.Select(x => x.Properties.Keys.ToList()).ToList();
 
-            var maxGroupNameLength = items.GroupItems.Count == 0 ? 0 : items.GroupItems.Max(x => x.Key.GroupName.Length);
+            var columnNumber = propertiesNames.Max(x => x.Count);
+            var intends = new List<int>(columnNumber);
 
-            return (maxGroupNameLength, new Dictionary<string, List<int>>());
+            for (int i = 0; i < propertiesNames.Count; i++)
+                for (int j = 0; j < propertiesNames[i].Count; j++)
+                {
+                    var maxIntend = Math.Max(intends[j], propertiesNames[i][j].Length);
+                    intends[j] = maxIntend;
+                }
+
+            for (int i = 0; i < propertiesNames.Count; i++)
+            {
+                intends[i] += _addCharsInCell;
+            }
+
+            var firstColumnIntend = items.GroupItems.Count == 0 ? 0 : items.GroupItems.Max(x => Math.Max(x.Key.ItemName.Length, x.Key.GroupName.Length));
+
+            return (firstColumnIntend, intends);
         }
 
-        private (int maxLengthItemName, IDictionary<string, List<int>> monitoringItemsPropertiesIntends) CalculateBasicIntendes(StatisticsItemsFullSet items)
+        private (int maxLengthItemName, List<int> monitoringItemsPropertiesIntends) CalculateBasicIntendes(StatisticsItemsFullSet items)
         {
-            var intends = items.Items.ToDictionary(x => x.Key, 
-                x => x.Value.Properties.Keys.Select(y=>y.Length).ToList());
+            var propertiesNames = items.Items.Values.Select(x => x.Properties.Keys.ToList()).ToList();
+
+            var columnNumber = propertiesNames.Max(x => x.Count);
+            var intends = new List<int>(columnNumber);
+
+            for (int i = 0; i < propertiesNames.Count; i++)
+                for (int j = 0; j < propertiesNames[i].Count; j++)
+                {
+                    var maxIntend = Math.Max(intends[j], propertiesNames[i][j].Length);
+                    intends[j] = maxIntend;
+                }
+
+            for (int i = 0; i < propertiesNames.Count; i++)
+            {
+                intends[i] += _addCharsInCell;
+            }
+
             var maxNameLength = items.Items.Max(x => x.Key.Length);
             return (maxNameLength, intends);
         }
 
         private void CalculateIntends(StatisticsItemsFullSet items)
         {
-            var (maxLengthGroupName, dynamicGroupsIntends) = CalculateIntendesForGroups(items);
-            var (maxLengthItemName, monitoringItemsPropertiesIntends) = CalculateBasicIntendes(items);
-            _baseNameIntend = Math.Max(maxLengthGroupName, maxLengthItemName);
-            _dynamicGroupPropertiesIntends = dynamicGroupsIntends;
-            _monitoringItemsPropertiesIntends = monitoringItemsPropertiesIntends;
+            (_baseIntends.GroupNameIntend, _intends.DynamicGroupIntends) = CalculateIntendesForGroups(items);
+            (_baseIntends.ItemsNameIntend, _intends.ItemsGroupIntends) = CalculateBasicIntendes(items);
         }
         private string BuildLogBody(StatisticsItemsFullSet items)
         {
-            return null;
-            //var sb = new StringBuilder();
+            var sb = new StringBuilder();
+            sb.Append("Monitoring Groups");
 
-            //sb.AppendLine(_delimeter);
+            var delimeterLineLength = _intends.DynamicGroupIntends.Sum(x => x) + 2;
+            var delimeterString = new string(_delimeterHoriontal, delimeterLineLength);
+
+            var groups = items.GroupItems.Values
+                .GroupBy(x => x.GroupName)
+                .ToDictionary(x => x.Key, x => x.ToList());
+
+            sb.AppendLine(delimeterString);
+            return null;
+
+            //for (int = 0; i < items.groups; i++)
 
             //foreach (var group in groups)
             //{
@@ -68,6 +105,13 @@ namespace Monitoring.Services
             //{
             //    item.Properties
             //}
+        }
+
+        private string PrintGroup(string groupName, IList<IStatisticsMonitoringItem> monitoringItems)
+        {
+            var sb = new StringBuilder();
+            sb.Append(_delimeterVertical);
+            return null;
         }
 
         public void SendStatistics(StatisticsItemsFullSet items)
