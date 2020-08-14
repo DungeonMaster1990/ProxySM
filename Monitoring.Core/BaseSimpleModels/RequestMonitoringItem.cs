@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Monitoring.Models.MonitoringItems;
 
-namespace Monitoring.Core
+namespace Monitoring.Models
 {
     /// <summary>
     /// Простой мониторинговый объект, используемый для записи информации о запросе
