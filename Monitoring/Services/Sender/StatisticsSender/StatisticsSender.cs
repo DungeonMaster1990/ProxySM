@@ -1,14 +1,17 @@
-﻿using Microsoft.Extensions.Options;
-using Monitoring.Configurations;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Threading;
+using System.Collections.Generic;
+using Microsoft.Extensions.Options;
+using Monitoring.Configurations;
 using Monitoring.Extensions;
 using Monitoring.Models;
 using Monitoring.Services.Sender;
 
 namespace Monitoring.Services
 {
+    /// <summary>
+    /// sender статистических мониторинговых объектов в лог
+    /// </summary>
     public class StatisticsSender: IStatisticsSender, IDisposable
     {
         private readonly MonitoringOptions _monitoringOptions;
@@ -32,6 +35,9 @@ namespace Monitoring.Services
                 StartMonitoring();
         }
 
+        /// <summary>
+        /// Стар мониторинга и начало сбора статистики
+        /// </summary>
         public void StartMonitoring()
         {
             if (_monitoringOptions.EnableMonitoring)
@@ -42,6 +48,9 @@ namespace Monitoring.Services
             }
         }
 
+        /// <summary>
+        /// Остановка мониторинга
+        /// </summary>
         public void StopMonitoring()
         {
             _timer?.Dispose(_timerDisposed);
@@ -50,6 +59,10 @@ namespace Monitoring.Services
         }
 
 
+        /// <summary>
+        /// Отправка статистики
+        /// </summary>
+        /// <param name="obj"></param>
         private void SendStatistics(object obj)
         {
             if (_token.IsCancellationRequested)
@@ -62,6 +75,9 @@ namespace Monitoring.Services
             SendAndReInitMonitoringItems();
         }
 
+        /// <summary>
+        /// Отправка и реинициализация
+        /// </summary>
         private void SendAndReInitMonitoringItems()
         {
             foreach (var destination in _destinations)

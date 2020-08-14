@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace Monitoring.Core
 {
     /// <summary>
-    /// [ServiceFilterAttribute(typeof(MonitoringSendRequestFilter))]
+    /// [ServiceFilterAttribute(typeof(MonitoringSendRequestFilter))] атрибут для записи информации о запросе
     /// </summary>
     public class MonitoringSendRequestFilter: Attribute, IAsyncActionFilter
     {
