@@ -30,6 +30,7 @@ namespace Monitoring.Services
 
         private (int maxLengthGroupName, List<int> dynamicGroupsIntends) CalculateIntendesForGroups(StatisticsItemsFullSet items)
         {
+            return (0, new List<int>());
             var propertiesNames = items.GroupItems.Values.Select(x => x.Properties.Keys.ToList()).ToList();
 
             var columnNumber = propertiesNames.Max(x => x.Count);
@@ -54,6 +55,7 @@ namespace Monitoring.Services
 
         private (int maxLengthItemName, List<int> monitoringItemsPropertiesIntends) CalculateBasicIntendes(StatisticsItemsFullSet items)
         {
+            return (0, new List<int>());
             var propertiesNames = items.Items.Values.Select(x => x.Properties.Keys.ToList()).ToList();
 
             var columnNumber = propertiesNames.Max(x => x.Count);

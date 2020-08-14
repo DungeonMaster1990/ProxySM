@@ -9,6 +9,8 @@ using Common.Models.ConfigModels;
 using Monitoring;
 using Monitoring.Configurations;
 using ProxyAPI.Monitoring;
+using Monitoring.Models;
+using Monitoring.Attributes;
 
 namespace ProxyAPI
 {
@@ -29,7 +31,6 @@ namespace ProxyAPI
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
@@ -40,12 +41,12 @@ namespace ProxyAPI
             services.Configure<SMApiConfigurationModel>(Configuration.GetSection("SMApiConfig"));
 
             services.Configure<MonitoringOptions>(Configuration.GetSection("MonitoringOptions"));
+            //services.AddScoped<RequestMonitoringItem>();
+            //services.AddScoped<MonitoringSendRequestFilterAttribute>();
+            
             AddCommonServices(services);
-
-            //_serviceProvider = services.BuildServiceProvider();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -53,8 +54,6 @@ namespace ProxyAPI
 
             app.UseSwagger();
 
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-            // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1");
@@ -64,8 +63,6 @@ namespace ProxyAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
-            //app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

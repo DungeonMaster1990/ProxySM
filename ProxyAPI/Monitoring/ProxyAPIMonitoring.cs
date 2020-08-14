@@ -1,6 +1,4 @@
-﻿using Monitoring.Models;
-
-namespace ProxyAPI.Monitoring
+﻿namespace ProxyAPI.Monitoring
 {
     public class ProxyAPIMonitoring
     {
