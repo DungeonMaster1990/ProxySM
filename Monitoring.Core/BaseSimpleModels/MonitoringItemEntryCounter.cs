@@ -1,5 +1,4 @@
 ﻿using Monitoring.ConcurrentCounters;
-using System.Diagnostics;
 
 namespace Monitoring.Models
 {

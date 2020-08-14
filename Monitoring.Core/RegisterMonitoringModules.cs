@@ -5,7 +5,6 @@ using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Monitoring.Attributes;
 using Monitoring.Configurations;
 using Monitoring.Models;
 using Monitoring.Services;
@@ -13,6 +12,9 @@ using Monitoring.Services.Sender;
 
 namespace Monitoring
 {
+    /// <summary>
+    /// Метод расширения для регистрации зависимосте на коллекции services
+    /// </summary>
     public static class RegisterMonitoringModules 
     {
         public static IServiceCollection RegisterMonitoring<Monitoring>(this IServiceCollection services,

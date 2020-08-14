@@ -4,6 +4,9 @@ using Monitoring.Models.MonitoringItems;
 
 namespace Monitoring.Core
 {
+    /// <summary>
+    /// Простой мониторинговый объект, используемый для записи информации о запросе
+    /// </summary>
     public class RequestMonitoringItem: BaseMonitoringItem
     {
         public DateTime Start { get; set; }
