@@ -1,19 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Fody" Version="6.0.5">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="MethodBoundaryAspect.Fody" Version="2.0.122" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Fody" Version="6.0.5" />
+		<PackageReference Include="MethodBoundaryAspect.Fody" Version="2.0.122" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Monitoring\Monitoring.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Monitoring\Monitoring.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="..\Monitoring\NLog.config">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="..\Monitoring\FodyWeavers.xml">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 </Project>

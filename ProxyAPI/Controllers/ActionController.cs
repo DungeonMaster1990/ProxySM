@@ -22,7 +22,7 @@ namespace ProxyAPI.Controllers
             StatisticsItemsFullSet = statisticsItemsFullSet;
         }
 
-        //[MethodMonitoring]
+        [MethodMonitoring]
         //[ServiceFilter(typeof(MonitoringSendRequestFilterAttribute))]
         [HttpGet]
         public IActionResult SendDataToSMByGet()
